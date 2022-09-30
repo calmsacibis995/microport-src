@@ -1,0 +1,32 @@
+if [ $# -ne 1 ]
+then
+	echo "Usage: mkroom package"
+	exit 1
+fi
+cd /
+while :
+do
+	echo "\nthis utility will delete all files in package $1"
+	echo "\nIs this ok? (y or n) \c"
+	read reply
+	case "$reply" in
+	 	y )
+			grep $1 etc/mkroom_list | while read file floppy  
+			do
+				if [ "$1" = "$floppy" ]
+				then
+					echo deleting $file
+					rm -f $file
+				fi
+			done
+			break
+			;;
+		n* )
+			break
+			;;
+		* )
+			echo "Invalid input. Try again."
+			continue
+			;;
+	esac
+done

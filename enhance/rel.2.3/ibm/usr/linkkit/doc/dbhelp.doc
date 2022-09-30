@@ -1,0 +1,79 @@
+Debugger Commands:
+b <address>                - Set breakpoint at address
+d [address]                - Dump memory in current format
+e <address>                - Examine/open a memory location
+f{b|w|l}                   - Set display format
+g [address]                - Continue execution at address
+h                          - Print this list
+i <address>                - Do an in instruction at address
+k <brkpt_num>              - Kill given breakpoint (* for all)
+l <address>                - Print nearest symbol before address
+o <address> <value>        - Do an out instruction at address
+r [%<reg> <value>]         - Set/display registers
+s                          - Single step (also ESC)
+t <address> [{=|!=} <val>] - Set trace point at address
+w <address>                - Write to memory without read
+x <address>                - Set execution trace point at address
+z                          - Dump some values from the TSS
+?                          - Display break points
+*specials*
+B			   - re-(Boot) system
+S			   - Show Symbols
+Note: <address> can be symbolic name or hex value
+
+
+Configuration Notes:
+
+    1. To include the debugger, use make -f debug.mk in the "cf" directory.
+
+    2. The debugger console is an async terminal (9600 baud) hooked up to
+       the /dev/tty0 port. You may hook it up to /dev/tty1 by
+       changing (with the patch utility) the variable "asyadr" to
+       0x2f8 (address of the tty1 port). The complete command is:
+	 /etc/patch    /system5 asydbg 0x2f8  /* patch the file */
+	 /etc/patch -k /system5 asydbg 0x2f8  /* patch the in memory kernel */
+
+       A future release will allow debugging using the system console.
+
+    3. It is possible to stop the kernel very early in the initialization
+       process to allow debugging driver initialization routines. To do this
+       use the following command:
+
+	  /etc/patch /system5 kernstop 1
+       <OR>
+	  make -f debug.mk kernstop (in the "cf" directory)
+
+    4. This debugger is still a very primitive debugger and as such there
+       are problems. A currently known problem is that addresses used with
+       debugger commands are not checked for validity, and illegal addresses
+       cat cause General Protection Fault panics.
+
+    5. There is an additional capability to build a kernel on a boot floppy
+       that is loaded instead of the default /system5 when rebooting the
+       system.  This is highly recommended when working with "experimental"
+       kernels.  To do this, type the following in the "cf" directory:
+
+ 	  make -f debug.mk floppy
+
+       This will build a hard disk kernel (that is one that mounts the
+       hard disk as the "root" filesystem) and copy it to the *SCRATCH*
+       floppy in drive A.  Insure that this is in fact a floppy that you
+       can overwrite!
+
+       The usefulness of this is immediately apparent when the kernel you
+       built "panics" for some reason and you want to reload your previous
+       kernel.  Just remove the boot floppy and reboot the system.  One
+       quirk of this is that the "ps" command does not find the correct
+       kernel by default. If you need to do a "ps" use the following
+       commands:
+
+	  mount /dev/dsk/0s25 /mnt -r
+	  ps -n /mnt/system5 -<ps options>
+
+    6. One last note. If you want to enter the debugger while the system
+       is running (other that a "panic", etc), enter "CTL-ALT-PRT SCREEN"
+       sequence on the system console.  You may now enter breakpoints, etc.
+       and continue with the "g" command.
+
+       Good Luck!
+---------------------------------------------------------------------------

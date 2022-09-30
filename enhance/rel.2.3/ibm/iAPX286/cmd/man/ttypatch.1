@@ -1,0 +1,82 @@
+
+
+
+     TTYPATCH(1)	UNIX 5.0 (28 January 1987)	   TTYPATCH(1)
+
+
+
+     NAME
+	  ttypatch - patch a kernel for	tty parameters
+
+     SYNOPSIS
+	  ttypatch [ -kcd ]  [ -t<tty#>	][ -i<interrupt> ][ -a<addr> ]
+	  [ -n<count> ][ -v<vector> ][ -m<modem ctl value> ]
+
+     DESCRIPTION
+	  ttypatch makes dev/tty* node(s) as needed and patches kernel
+	  parameters. By default, the filename /system5 is patched.
+
+	  -k	    patches the	dev/kmem (running) version of the
+		    kernel. Note that the disk file is not patched.
+
+	  -c	    clears (zeros) the kernel parameters.
+
+	  -d	    prints the current values of the kernel parameters.
+
+	  -t#	    starting tty number	(i.e. 0	for /dev/tty0).
+
+	  -i#	    interrupt line number (i.e.	4 for COM1, 3 for
+		    COM2).
+
+	  -a#	    address of 16450/8250 UART base (i.e. 1016 for
+		    COM1, 760 for COM2).
+
+	  -n#	    number of consecutive UARTs	(8 i/o locations
+		    apart) on this interrupt line.
+
+	  -v#	    port address to enable interupts, latch individual
+		    interrupt lines (0 if not neccessary to read/write).
+
+	  -m#	    Modem Control Register value (values for OUT1 & OUT2
+		    are board/port dependent, default = 0x0c).
+
+	       Numbers and addresses should be in decimal for expr
+	       compatability.
+
+     FILES
+	  /dev/tty??, /dev/ttym??, /dev/ttyM??
+     SEE ALSO
+	  patch(1), mknod(1)
+
+     EXAMPLES
+
+	Standard COM1 (tty0 at int 4 and address 0x3f8):
+
+                "ttypatch -t0 -a1016 -i4"
+
+	Standard COM2 (tty1 at int 3 and address 0x2f8):
+
+                "ttypatch -t1 -a760 -i3"
+
+	8 port Digiboard using COM2's interrupt.   Devices  tty0  through
+	tty7 are created:
+
+                "ttypatch -t0 -n8 -a256 -i3"
+
+	4 port Digiboard. This command assumes the link kit has been used
+	to  allow  interrupt  5 for serial service.  Devices tty2 through
+	tty5 are created:
+
+                "ttypatch -t2 -i5 -a256 -n4"
+
+
+	4 port AST board. This command assumes the link kit has been used
+	to  allow  interrupt  7 for serial service.  Devices tty6 through
+	tty9 are created:
+
+                "ttypatch -t6 -i7 -a416 -n4 -v0x1bf -m0"
+
+
+
+     BUGS
+	

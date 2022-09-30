@@ -1,0 +1,44 @@
+#
+#	iAPX286	@(#)kds.ti	1.1	85/06/06
+#
+# kds6402 also known as kokusai
+#
+kds,
+	lines#24, cols#80,
+	cr=^M, cuu1=^K, cud1=^V, cub1=^H, cuf1=^L, am, bw, xenl,
+	home=^^, nel=^_, bel=^G, clear=^Z$<1>,
+	ind=^J, ri=\EE, il1=\EE, dl1=\ER,
+	cup=\E=%p1%' '%+%c%p2%' '%+%c,
+	el=\ET, ed=\EY, ich1=\EQ, dch1=\EW,
+	smso=\EG4, rmso=\EG0, xmc#1, .msgr,
+	smul=\EG8, rmul=\EG0,
+	rev=\EG4, blink=\EG2, invis=\EG1, sgr0=\EG0,
+	smacs=\E$, rmacs=\E%,
+	flash=\Eb$<150>\Ed,
+	kcuu1=^K, kcud1=^V, kcub1=^H, kcuf1=^L, khome=^^,
+	kbs=\377,
+# kds without arrow keys
+kds-na,
+	kcuu1@, kcud1@, kcub1@, kcuf1@, khome@,
+	use=kds,
+#
+# kds 6404 (colour)
+#
+kds-c,
+	smso=\E[071, rmso=\E[0ZZ, xmc@, msgr,
+	smul=\E[830, rmul=\E[0ZZ,
+	rev=\E[430, blink=\E[230, invis=\E[130, sgr0=\E[0ZZ,
+	cvvis=\E.2, civis=\E.0, cnorm=\E.4,
+	use=kds,
+kds-cna,
+	kcuu1@, kcud1@, kcub1@, kcuf1@, khome@,
+	use=kds-c,
+#
+# kds6402g (graphics)
+#
+kds-g,
+	smso=\E[470, rmso=\E[0ZZ,
+	use=kds-c,
+kds-gna,
+	kcuu1@, kcud1@, kcub1@, kcuf1@, khome@,
+	use=kds-g,

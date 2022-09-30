@@ -1,0 +1,66 @@
+DISPLAY Modes:
+
+bios              adapter num    buffer char
+mode description  types  colors  start  size
+
+  0   40x 25 A/N  C/E     16,    B8000, 8x8
+  1   40x 25 A/N  C/E     16,    B8000, 8x8
+  2   80x 25 A/N  C/E     16,    B8000, 8x8
+  3   80x 25 A/N  C/E     16,    B8000, 8x8
+  4  320x200 APA  C/E      4,    B8000, 8x8
+  5  320x200 APA  C/E      4,    B8000, 8x8
+  6  640x200 APA  C/E      2,    B8000, 8x8
+  7   80x 25 A/N  C/E/M   4M,    B0000, 9x14
+  D  320x200 APA  E	  16,    A0000, 8x8
+  E  640x200 APA  E	  16,    A0000, 8x8
+  F  640x350 APA  E       4M,    B0000, 9x14
+ 10  640x350 APA  E	   4,    A0000, 8x14
+ 11  720x350 APA  H   	   4,    A0000, 8x14
+
+ MF  640x350 APA  E       4M,    B0000, 9x14
+M10  640x350 APA  E	  16,    A0000, 8x14
+ E0   40x 25 A/N  E       16,    B8000, 8x14
+ E1   40x 25 A/N  E       16,    B8000, 8x14
+ E2   80x 25 A/N  E       16,    B8000, 8x14
+ E3   80x 25 A/N  E       16,    B8000, 8x14
+
+Notes:
+A/N	Alphanumeric
+APA	All Points Addressable
+	(alphanumeric display is not presently supported)
+
+C	Adapter type = CGA
+E	Adapter type = EGA
+M	Adapter type = Mono adapter
+H	Adapter type = Hercules (not BIOS compatible)
+
+Mx	Same mode with ega having more than 64k memory.
+Ex	Same mode when an Enhanced Color Display is attached.
+
+Num Colors = 4M refers to different mono attributes:
+Color	Attribute
+0x0	Black
+0x3	White
+0xC	Blinking
+0xF	Intensified
+
+Standard Color Mapping for Mode 10:
+Character	Monochrome	Color Display	Color Display
+Attribute	Display		64Kb memory	> 64Kb memory
+---------	-------		-----------	-------------
+ 0x00		Black		Black		Black
+ 0x01		White		Blue		Blue
+ 0x02		Black		Black		Green
+ 0x03		White		Blue		Cyan
+ 0x04		Blinking	Red		Red
+ 0x05		Intensified	White		Magenta
+ 0x06		Blinking	Red		Brown
+ 0x07		Intensified	White		White
+ 0x08		Black		Black		Dark Grey
+ 0x09		White		Blue		Light Blue
+ 0x0A		Black		Black		Light Green
+ 0x0B		White		Blue		Light Cyan
+ 0x0C		Blinking	Red		Light Red
+ 0x0D		Intensified	White		Light Magenta
+ 0x0E		Blinking	Red		Yellow
+ 0x0F		Intensified	White		Intensified White

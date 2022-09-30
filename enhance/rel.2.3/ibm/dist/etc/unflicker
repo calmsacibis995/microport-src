@@ -1,0 +1,12 @@
+colrsnow=`patch -k /system5 colrsnow`
+case $colrsnow in
+	0x0)
+		x=1
+		;;
+	0x1)
+		x=0
+		;;
+esac
+patch /system5 colrsnow $x
+patch -k /system5 colrsnow $x
+echo "Your screen flicker problem should now be fixed"

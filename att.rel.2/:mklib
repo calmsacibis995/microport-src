@@ -1,0 +1,96 @@
+#	@(#)	1.6
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 native libraries"
+
+source=${SRC-$ROOT/usr/src}
+cd ${source}/lib
+#
+#	insure that the directories for the libraries exist
+#
+if [ ! -d $ROOT/lib ]
+then mkdir $ROOT/lib
+fi
+if [ ! -d $ROOT/lib/large ]
+then mkdir $ROOT/lib/large
+fi
+if [ ! -d $ROOT/lib/small ]
+then mkdir $ROOT/lib/small
+fi
+if [ ! -d $ROOT/lib/libp ]
+then mkdir $ROOT/lib/libp
+fi
+if [ ! -d $ROOT/lib/libp/large ]
+then mkdir $ROOT/lib/libp/large
+fi
+if [ ! -d $ROOT/lib/libp/small ]
+then mkdir $ROOT/lib/libp/small
+fi
+if [ ! -d $ROOT/usr/lib ]
+then mkdir $ROOT/usr/lib
+fi
+if [ ! -d $ROOT/usr/lib/large ]
+then mkdir $ROOT/usr/lib/large
+fi
+if [ ! -d $ROOT/usr/lib/small ]
+then mkdir $ROOT/usr/lib/small
+fi
+if [ ! -d $ROOT/usr/lib/libp ]
+then mkdir $ROOT/usr/lib/libp
+fi
+if [ ! -d $ROOT/usr/lib/libp/large ]
+then mkdir $ROOT/usr/lib/libp/large
+fi
+if [ ! -d $ROOT/usr/lib/libp/small ]
+then mkdir $ROOT/usr/lib/libp/small
+fi
+if [ ! -d $ROOT/usr/lib/lex ]
+then mkdir $ROOT/usr/lib/lex
+fi
+if [ ! -d $ROOT/usr/lib/terminfo ]
+then mkdir $ROOT/usr/lib/terminfo
+fi
+if [ ! -d $ROOT/usr/bin ]
+then mkdir $ROOT/usr/bin
+fi
+opt=""
+for A in $*
+do
+	NAME= TEST=./
+	B=`echo $A ^ sed -e 's/.*\///' `
+	i=$B
+	if [ -d $i ]
+	then (
+		echo ======== $i
+		cd $i
+		if [ -f $i.mk  ]
+		then
+			if make -b -f $i.mk install  I="install -i -n $ROOT/lib $ROOT/usr/lib"
+			then
+				make -b -f $i.mk clobber
+			else
+				echo MAKE ERROR
+			fi
+			rm -f *.o
+		elif [ -f $i.rc ]
+		then
+			cmd=`echo "./$i.rc $opt"`
+			sh $cmd
+		else
+			echo XXXXXXXX Do Not Know How to MAKE $B
+		fi
+	) else
+		opt=`echo $i $opt`
+	fi
+done

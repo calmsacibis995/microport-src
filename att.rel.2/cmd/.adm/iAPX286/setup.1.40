@@ -1,0 +1,94 @@
+set -x
+format -i 4 /dev/rdsk/0s10
+format -i 4 -f 0 -l 0 /dev/rdsk/0s1
+mkfs /dev/dsk/0s10 12288:1200 2 64
+labelit /dev/rdsk/0s10 root 0s10
+mkfs /dev/dsk/0s11 30720 2 64
+labelit /dev/rdsk/0s11 usr 0s11
+mkfs /dev/dsk/0s14 5488 2 64
+labelit /dev/rdsk/0s14 tmp 0s14
+ib /dev/rdsk/0s1 /dev/rdsk/0s10
+kmount /dev/dsk/0s10 /mnt
+set +x
+cpio -pvduma /mnt <<!
+/dev
+/dev/error
+/dev/console
+/dev/syscon
+/dev/systty
+/dev/null
+/dev/tty
+/dev/ttyaux
+/dev/tty0
+/dev/tty1
+/dev/tty2
+/dev/tty3
+/dev/tty4
+/dev/tty5
+/dev/tty6
+/dev/tty7
+/dev/tty8
+/dev/tty9
+/dev/tty10
+/dev/tty11
+/dev/tty12
+/dev/lp
+/dev/kmem
+/dev/mem
+/dev/swap
+/dev/prf
+/dev/dsk
+/dev/dsk/0s15
+/dev/dsk/0s24
+/dev/dsk/0s25
+/dev/dsk/0s29
+/dev/rdsk
+/dev/rdsk/0s15
+/dev/rdsk/0s24
+/dev/rdsk/0s25
+/dev/rdsk/0s29
+/bin
+/bin/mkdir
+/bin/rsh
+/bin/sh
+/bin/su
+/bin/cpio
+/bin/sync
+/etc
+/etc/init
+/bin/telinit
+/etc/boot
+/etc/ioctl.syscon
+/etc/mkfs
+/etc/format
+/etc/ib
+/etc/labelit
+/etc/uadmin
+/etc/kmount
+/etc/kumount
+/etc/passwd
+/etc/inittab
+/bin/setup.2
+/dev/dsk/0s1
+/dev/dsk/0s10
+/dev/dsk/0s11
+/dev/dsk/0s12
+/dev/dsk/0s13
+/dev/dsk/0s14
+/dev/rdsk/0s1
+/dev/rdsk/0s10
+/dev/rdsk/0s11
+/dev/rdsk/0s12
+/dev/rdsk/0s13
+/dev/rdsk/0s14
+/usr
+/lib
+/tmp
+/mnt
+!
+set -x
+kumount /dev/dsk/0s10
+sync;sync;sync
+set +x
+echo "insert floppy set A #2 and reboot with 'b :wf0:' then type setup.2"
+uadmin 2 0

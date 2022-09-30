@@ -1,0 +1,151 @@
+                         BASE specification
+                         ------------------
+
+Summary
+-------
+
+The BASE file describes the contents of both the source tape and floppy
+disks.   It defines which files are released on which medium and for the
+floppy disks, which floppy package the files reside in.
+
+Introduction
+------------
+
+All information pertaining to the iAPX286 System V.2 release port
+is contained in this file.  It will be the only file which will be 
+guaranteed to be correct and as such, must be updated whenever errors are found
+in the area of software issue.
+
+The BASE file will be used on the vax as the ONLY mechanism for defining which
+files are to be downloaded to the INTEL 310 for validation and subsequent
+issue.  It will be used on the INTEL 310 for the manufacture of the boot and
+floppy package sets.
+
+BASE file format
+----------------
+
+Ascii format file containing ten fields delimited by one or more spaces.
+
+Field names
+-----------
+
+target_medium product_set package program_set mode owner group description 
+target_name source_name
+
+Field name descriptions
+-----------------------
+
+target_medium - (medium on which this file is to be issued) 
+-------------
+
+-	undefined target medium
+#	comment record only
+	product is not required for this port
+a	made automatically
+b	both source and object
+c	vax cross environment
+i	required on boot floppy or is only required during installation
+o	object only
+s	source only
+?	query 
+
+product_set - (collection of one or more packages)
+-----------
+
+-	undefined product set
+NAME	product set name as defined by DRI
+
+package - (collection of one or more program sets)
+-------
+
+-	undefined floppy package name or not applicable
+NAME	floppy package name as defined by DRI
+
+program_set - (program (or the name of a collection of programs) which
+-----------    requires the presence of this file to be built or run)
+
+-	undefined program set name
+NAME	program set name as defined in steering file
+
+mode - (format as ouput by the 'ls -l' command)
+----
+
+-	undefined filetype/permissions
+MODE	filetype/permissions
+
+owner - (owner name of file)
+-----
+
+-	undefined owner
+OWNER	owner name
+
+group - (group name of file)
+-----
+
+-	undefined group
+GROUP	group name
+
+file_description_field - (description of file type as gleaned by the
+----------------------    'file command' or from the steering file)
+
+-	undefined file description
+arch	archive file
+asrc	assembler source
+atxt	ascii text
+bin	binary executable program
+cman	manual pages - have been nroff'd -man
+conf	configuration template file (requires user modification)
+csrc	c source
+ctxt	commands text - shell commands
+data	uncategorizable binary data
+dev	character or block special device
+dir	directory
+dsrc	database source
+null	empty file
+fifo	pipe
+ftxt	fortran text
+incl	include files in /usr/include
+isrc	header files not in /usr/include
+llib	lint library
+lsrc	lex source
+make	make file
+man	nroff manual page
+ntxt	[nt]roff, tbl, or eqn input text
+obj	.o file
+pman	packed manual page
+read	readme file
+ssrc	shell program source
+tic	tic source
+ysrc	yacc source
+
+target_filename - (name by which the file exists on the target medium)
+---------------
+
+NAME	target filename
+
+source_filename - (name of file containing the contents of the target
+---------------    filename)
+
+-	source filename identical to target filename
+NAME	source filename
+m,n	used for devices where m is the major node
+			       n is the minor node
+LINK_n  used for files that are linked 
+	where n is the file to which this file is linked
+
+integration
+-----------
+
+/usr/.adm.
+----------
+
+source_filenames in the directory /usr/.adm require special consideration.   
+
+
+a) they contain master versions of the target_filenames.   these are required 
+   where different files are required dependant upon 20m or 40m systems, or 
+   where those files are necessarily changed to allow the master release
+   system to run (e.g. /etc/passwd).
+
+
+Wayne Alston 09/20/85	issue #11

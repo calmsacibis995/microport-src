@@ -1,0 +1,80 @@
+# iAPX286 version
+
+# I cross-compile System V/286 Release 2.0 from the distribution tape.
+# I am not elegant and would like my obesity reduced in any correct manner.
+# I was used to create most of the system.
+# I assume a clean source tree, excluding all executables.
+set -x
+ROOT=${ROOT-`cd ../..;pwd`} ; export ROOT
+
+# Create a place to build the cross-environment
+mkdir $ROOT/i286
+mkdir $ROOT/i286/bin
+mkdir $ROOT/i286/lib
+mkdir $ROOT/i286/lib/small
+mkdir $ROOT/i286/lib/large
+mkdir $ROOT/i286/lib/libp
+mkdir $ROOT/i286/lib/libp/small
+mkdir $ROOT/i286/lib/libp/large
+mkdir $ROOT/i286/usr
+mkdir $ROOT/i286/usr/include
+mkdir $ROOT/local
+
+cd $ROOT/usr/src
+# Set up headers for the cross-environment
+echo exit 255 >pdp11  ; chmod +x pdp11
+echo exit 255 >vax    ; chmod +x vax
+echo exit 255 >u3b    ; chmod +x u3b
+echo exit 255 >u3b2   ; chmod +x u3b2
+echo exit 255 >u3b5   ; chmod +x u3b5
+echo exit 0   >iAPX286; chmod +x iAPX286
+mkdir $ROOT/usr/include
+chmod +x :mkhead
+PATH=:$PATH sh :mkhead
+mkdir $ROOT/usr/include/sys
+chmod +x :mksyshead
+PATH=:$PATH sh :mksyshead
+rm vax pdp11 u3b u3b2 u3b5 iAPX286
+
+# Install headers here also, because makefiles tend to get a bit lost
+cd $ROOT/usr/include
+find . -print | cpio -pdm $ROOT/i286/usr/include
+
+cd $ROOT/usr/src
+R=$ROOT; unset ROOT; export ROOT
+chmod +x :mkxtools
+sh :mkxtools
+ROOT=$R; export ROOT
+
+$ROOT/i286/bin/i286env <<ENDCROSS
+chmod +x :mkxlib
+sh :mkxlib \*
+
+cd $ROOT/i286/usr/include
+find . -print | cpio -pdv $ROOT/usr/include
+
+cd $ROOT/usr/src
+chmod +x :mktouch
+sh :mktouch
+
+# Remove results of :mktouch before replacing lest we leave 0 length files.
+rm $ROOT/lib/*/libld.a
+cd $ROOT/i286/lib
+find . -name 'libld.a' -print | cpio -pdv $ROOT/lib
+
+cd $ROOT/usr/src/cmd/sgs/xenv/i286
+sh pathedit <<EOF
+y
+EOF
+
+cd ../..
+make -f xsgs.mk prepnative
+cd inc/i286
+cp paths.h sgs.h $ROOT/usr/include
+
+cd $ROOT/usr/src
+chmod +x :mk
+sh :mk
+ENDCROSS
+
+echo BE SURE TO RUN lint.nmk and spell.nmk native.

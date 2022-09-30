@@ -1,0 +1,105 @@
+* @(#)master	1.11
+*
+* The following devices are those that can be specified in the system
+* description file.  The name specified must agree with the name shown.
+*
+*                                       blk     chr
+* name	vector	hndlrs	type	prefix	maj	maj	max #	struct decl.
+*-----	------	------	----	------	---	---	----- 	----------------
+*
+wini	37	ocrwi	rbc	wn	0	4	4
+sio	35	ocrwi	ct	sio	0	5	4
+sema	0	sx	so	sem	0	0	1
+mesg	0	s	so	msg	0	0	1
+shmem	0	fex	so	shm	0	0	1
+sxt	0	ocrwi	co	sxt	0	6	32
+lp	47	ocwi	co	lp	0	7	1
+prf	0	rwi	co	prf	0	8	1
+emul	0	o	so	eml	0	0	1
+*
+* The following devices must not be specified in the system description
+* file.  They are here to supply information to the config program.
+*
+con	38	ocrwi	srcot	con	0	0	1
+memory	0	rw	srco	mm	0	1	1
+tty	0	orwi	srco	sy	0	2	1
+errlog	0	ocrs	srco	err	0	3	1
+$$$
+*
+* The following entries form the alias table.
+*
+dsk	wini
+flp	wini
+$$$
+*
+* The following entries form the tunable parameter table.
+*
+buffers	NBUF
+inodes	NINODE
+files	NFILE
+mounts	NMOUNT
+swapmap	SMAPSIZ
+coremap	CMAPSIZ
+calls	NCALL
+procs	NPROC
+texts	NTEXT
+clists	NCLIST
+sabufs	NSABUF	0
+power	POWER	0
+maxproc	MAXUP	25
+* hashbuf must be a power of 2
+hashbuf	NHBUF	64
+physbuf	NPBUF	4
+csibnum	CSIBNUM	20
+vpmbsz	VPMBSZ	8192
+vpmnexus VPMNEXUS 0
+x25links	X25LINKS	1
+x25bufs	X25BUFS	256
+x25nexus X25NEXUS 0
+x25bytes	X25BYTES	(16*1024)
+bx25links	BX25LINKS	2
+bx25bufs	BX25BUFS	80
+bx25bytes	BX25BYTES	(16*1024)
+bx25hlprot	BX25HLPROT	2
+bx25nexus	BX25NEXUS	0
+sesbufs	SESBUFS	32
+sesbytes	SESBYTES	(8*1024)
+mesg	MESG	0
+msgmap	MSGMAP	10
+msgmax	MSGMAX	8192
+msgmnb	MSGMNB	8192
+msgmni	MSGMNI	10
+msgssz	MSGSSZ	8
+msgtql	MSGTQL	40
+msgseg	MSGSEG	1024
+sema	SEMA	0
+semmap	SEMMAP	10
+semmni	SEMMNI	10
+semmns	SEMMNS	60
+semmnu	SEMMNU	30
+semmsl	SEMMSL	25
+semopm	SEMOPM	10
+semume	SEMUME	10
+semvmx	SEMVMX	32767
+semaem	SEMAEM	16384
+shmem	SHMEM	0
+shmmax	SHMMAX	65535
+shmmin	SHMMIN	1
+shmmni	SHMMNI	10
+shmseg	SHMSEG	6
+shmbrk	SHMBRK	32
+shmall	SHMALL	256
+stibsz	STIBSZ	8192
+stobsz	STOBSZ	8192
+stihbuf	STIHBUF	(ST_0*4)
+stohbuf	STOHBUF	(ST_0*4)
+stnprnt	STNPRNT	(ST_0>>2)
+stnexus STNEXUS 0
+emtbsz	EMTBSZ	8192
+emrbsz	EMRBSZ	8192
+emrcvsz	EMRCVSZ	2048
+embhdr	EMBHDR	(EM_0*6)
+emnexus	EMNEXUS	0
+flckrec	FLCKREC	100
+flckfil	FLCKFIL	25
+autoup	AUTOUP	20

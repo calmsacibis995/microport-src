@@ -1,0 +1,55 @@
+#	@(#)	1.3
+ROOT= ../..
+FLG =
+UBIN = $(ROOT)/usr/bin
+ULIB = $(ROOT)/usr/lib
+MIP = $(ROOT)/usr/src/cmd/sgs/comp/mip
+LINT = lint
+LINT1 = $(ROOT)/usr/lib/lint1
+INS = install
+STRIP = strip
+TMPDIR = /usr/tmp
+FFLAG = 
+#LFLAGS = -i $(LDFLAGS)
+LFLAGS = $(LDFLAGS)
+#  -DBUG4 is necessary to turn off pcc debugging tools (these tools cannot
+#   be used with the lint shell script since their output conflicts)
+CFLAGS = -O -Ml -DLINT -I$(MIP) -I. -DBUG4 -DFLEXNAMES
+FRC =
+MFILES = macdefs $(MIP)/manifest $(MIP)/mfile1
+
+#object files for the first and second passes
+OFILES1 = trees.o pftn.o scan.o comm1.o messages.o optim.o xdefs.o cgram.o\
+	lerror.o msgbuf.o lint.o
+OFILES2 = lpass2.o lerror2.o messages2 msgbuf2.o
+
+all:	llib-lc.ln llib-port.ln llib-lm.ln
+	cp llib-lc.ln $(ULIB)/llib-lc.ln
+	cp llib-port.ln $(ULIB)/llib-port.ln
+	cp llib-lm.ln $(ULIB)/llib-lm.ln
+	(cd ../.. ; find usr/lib/llib-lc.ln usr/lib/llib-port.ln \
+		usr/lib/llib-lm.ln -print | cpio -oc > local/lint.libs )
+
+#makes for the lint libraries
+llib-lc.ln:  $(ULIB)/llib-lc
+	$(CC) -E -C -Dlint $(ULIB)/llib-lc | \
+		$(LINT1) -vx -H$(TMPDIR)/hlint >llib-lc.ln 
+	rm $(TMPDIR)/hlint
+llib-port.ln:  $(ULIB)/llib-port
+	$(CC) -E -C -Dlint $(ULIB)/llib-port | \
+		$(LINT1) -vxp -H$(TMPDIR)/hlint >llib-port.ln
+	rm $(TMPDIR)/hlint 
+llib-lm.ln:  $(ULIB)/llib-lm
+	$(CC) -E -C -Dlint $(ULIB)/llib-lm | \
+		$(LINT1) -vx -H$(TMPDIR)/hlint >llib-lm.ln
+	rm $(TMPDIR)/hlint 
+
+#miscellaneous utilities
+
+
+clean:
+	rm -f llib-lc.ln llib-port.ln llib-lm.ln 
+clobber: clean
+	(cd $(ROOT) ; rm -rf local)
+FRC:
+

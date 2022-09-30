@@ -1,0 +1,29 @@
+* @(#)dfile.microport	2.3.0
+* Copyright 1986 by Microport.  All Rights Reserved
+* Default configuration settings for Floppy rooted kernel.
+wini	0	2
+flop	0	1
+rdswap	0	1
+root	flop	198
+pipe	flop	198
+swap	rdswap	0	0	250
+dump	wini	0
+asy	0	4
+*sxt	0	8
+lp	0	3
+*prf	0	1	
+cmos	0	1
+emul	0
+buffers	0
+inodes	50
+files	50
+mounts	8
+swapmap	75
+coremap	100
+calls	50
+procs	15
+texts	40
+clists	30	* 2.3.0
+mesg	0
+shmem	0
+sema	0

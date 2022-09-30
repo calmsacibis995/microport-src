@@ -1,0 +1,33 @@
+Changes to "How to install a modem"
+
+All through the page: change Haynes to Hayes.  Haynes is a brand of pantyhose.
+
+Steps 1 through 5: Change switch settings so that Hayes does not
+	print back status messages!
+
+Step 6: remove this step
+
+Step 7: change the two "mode entry" lines to:
+	To allow only logins on modem:
+		auto answer mode entry:			3:2:respawn:/etc/getty ttym3 1200
+
+	To allow only cu/uucp dial outs:
+		originate mode entry:			3:2:off:/etc/getty ttym3 1200
+
+	To allow both:
+		answer/originate mode entry:	3:2:respawn:/etc/getty ttyM3 1200
+
+Step 8: This entry is missing some spaces.  The following entry works
+	on scc.
+
+	L.sys:
+		sysname Any tty0 1200 tty0 "" ATQ0\r OK ATQ1\r "" 
+		ATDT\sxxx\r ogin:-@-ogin: yyy ssword: zzz
+
+	Note: substitute your phone number in xxx, uucp account name for yyy
+		and the password for zzz.  Join both lines into one (important).
+		The sequence ' "" ATQ0\r OK ATQ1\r ' is not necessary but is
+		a simple diagnostic that ensures the modem is up and waiting.
+
+	L-devices:
+	DIR tty0 tty0 1200

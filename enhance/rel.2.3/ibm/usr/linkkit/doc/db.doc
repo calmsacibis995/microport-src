@@ -1,0 +1,66 @@
+
+
+
+	  kernel debugger			       kernel debugger
+
+
+
+		      EXPLAINATION of the KERNEL DEBUGGER
+
+
+
+
+	  INTRODUCTION
+
+		  This debugger	was put	together to help in house with
+	  kernel changes and particularly difficult problems.  We have
+	  no intensions	of turning it into a product or	supporting  it
+	  as  a	 product.   We	can  _n_o_t _g_u_a_r_a_n_t_e_e the accuracy	of the
+	  debugger and cannot be responsible for any problems  it  may
+	  create.
+
+		  On the positive side,	however, the  kernel  debugger
+	  can  be  very	 usefull  for setting break points in order to
+	  look at kernel variables at specific	points	in  execution.
+	  Also,	if the kernel traps with a fault, the debugger will be
+	  entered and there is a better	chance	of  finding  out  what
+	  happened by looking around a bit with	the debugger.
+
+		  A major weakness in this debugger is the  fact  that
+	  it  does  no	address	validation before attempting accesses.
+	  This little problem can cause	a General Protection Fault  if
+	  an illegal address is	used in	a debugger command.
+
+
+
+	  CONTENT DESCRIPTION
+
+		  This	diskette  contains  files  to  fit  into  your
+	  linkkit directory structure.
+
+			  linkkit/cmd/unixsyms/unixsyms
+			  linkkit/doc/db.doc
+			  linkkit/doc/dbhelp.doc
+			  linkkit/db.o
+
+
+		  The  linkkit/cf/Makefile   will   use	  the	object
+	  linkkit/db.o	file  to make a	debug kernel from your linkkit
+	  if an	environment variable _D_E_B_U_G_L_I_B  is  set	to  "../db.o".
+	  The	_l_i_n_k_k_i_t/_d_o_c/_d_b_h_e_l_p._d_o_c	 file  briefly	describes  the
+	  commands that	the debugger understands.
+
+
+
+
+
+
+
+
+
+
+				     - 1 -
+
+
+
+

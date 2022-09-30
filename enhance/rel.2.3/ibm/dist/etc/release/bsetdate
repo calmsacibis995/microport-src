@@ -1,0 +1,32 @@
+:
+#  iAPX286 @(#)bsetdate.sh	1.1
+#  Check and set date
+#  Modified to collect date directly from CMOS
+#  Using 'setup -d' - Henry Seltzer 6-23-86
+
+. /etc/TIMEZONE
+date `/etc/setup -d`
+while :
+do
+	echo "Is the date `date` correct? (y or n) \c"
+	read reply
+	if
+		[ "$reply" = y ]
+	then
+		break
+	else
+		echo "Enter the correct time: (hh:mm:ss) or RETURN \c"
+		read reply2
+		if [ "$reply2" != "" ]
+		then 
+			/etc/setup time "$reply2"
+		fi
+		echo "Enter the correct date: (mm/dd/yy) or RETURN \c"
+		read reply1
+		if [ "$reply1" != "" ]
+		then 
+			/etc/setup date "$reply1"
+		fi
+		date `/etc/setup -d`
+	fi
+done

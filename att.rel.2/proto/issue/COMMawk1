@@ -1,0 +1,12 @@
+BEGIN { printf "%40-s %s\n","missing in BASE","missing in vax filestore"
+ 	printf "%40-s %s\n\n\n","---------------","-----------------------" }
+$1 != $2 && $3 !~ /\.adm/ && \
+$1 !~ /\.bak$/ && \
+$1 !~ /\.tmp$/ && \
+$1 !~ /nohup\.out$/ && \
+( $1 !~ /\.a$/ || $1 ~ /large/ || $1 ~ /small/ ) && \
+( $1 !~ /\.o$/ || $1 ~ /large/ || $1 ~ /small/ ) {
+	if ($1 == "MISSING") $1 =""
+	if ($2 == "MISSING") $2 =""
+	printf "%40-s %s\n",$1,$2
+}

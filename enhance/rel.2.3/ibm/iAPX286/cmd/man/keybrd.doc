@@ -1,0 +1,68 @@
+
+	    Keyboard Driver Updates (Release 5.2 - Version 2.2)
+
+
+1. Expanded keymaps: Each virtual console now has it's own keymap
+   via the setkey ioctl/program.  During ths processing of input keys,
+   a lookup in the keymap for that virtual console is done. If the
+   key is not found, and this is one of the user virtual consoles,
+   (/dev/cons1..3), a 2nd lookup is done for the system console (/dev/console).
+   This makes the keymap for the system console the default keymap, which
+   is initialized in /etc/rc.d/keybrd.rc.  Note that this capability
+   will be maintained as much as possible when System 5.3 is released, but
+   the default handling of non-mapped keys will probably be changed somewhat.
+
+2. There is a RAW input mode that conforms to the ATT Unix Release 5.3
+   specification (with a couple of exceptions).  The specific information
+   is:
+
+/* defines for keyboard and display ioctl's */
+#define KIOC		('K'<<8)
+#define KDGMODE		(KIOC|1)	/* gets adapter mode */
+#define KDSMODE		(KIOC|2)	/* sets adapter mode */
+
+   The values for the ioctl argument are:
+/*
+ * keyboard translation modes
+ */
+#define	K_RAW		0x00	/* keyboard just sends raw up/down scan codes */
+#define	K_XLATE		0x01	/* keyboard translates scan codes to ascii */
+
+   The exceptions mentioned above are:
+
+   A. CTL-ALT-DELETE still traps the reboot code. Note the user program will
+      get the scan codes for keys pressed but the last key ("delete") will
+      initiate the reboot sequence.
+ 
+   B. ALT-F1, ALT-F2, ALT-F3, ALT-F4 is used to switch virtual consoles and
+      as such, the user program receives the "down alt" and "down Fx" code
+      but will not receive the corresponding "up" codes unless the user
+      uses the ALT-Fx to return to the "RAW" keyboard. Also the Fx up key
+      will not be the same as the Fx down key.
+
+   C. SYSREQ also is used to switch virtual consoles and also receives
+      a similiar treatment.
+
+
+   A couple of other notes:
+
+   A. The keyboard driver still maintains the state of the shift keys and
+      the keyboard leds. This means that if one virtual console is in
+      "RAW" mode and the shift-lock key is depressed, the user program
+      receives the "down shift-lock". Now if the user switches to a 
+      virtual console in "XLATE" mode, the shift state is maintained and
+      input alpha characters are shifted to upper case.  If the shift-lock
+      is released, the characters will now be unshifted but the "RAW"
+      console does not receive the state change unless the shift-lock
+      was pressed will the "RAW" virtual console was "active".  This
+      is considered a bug and will change when the full 5.3 keyboard
+      driver is implemented.
+    
+   B. There is no presently available way to set "RAW" mode with a user
+      command. The stty "RAW" refers only to the interpretation of the
+      ascii keys and does not affect the conversion of scan codes to
+      ascii.  This also implies (correctly) that to take advantage of
+      the "down" keys (which have the 8th bit set), you must also
+      place the tty in "RAW" mode (or at least turn off input processing).
+      This is also necessary to prevent the "erase", "kill" (and others)
+      from being processed.

@@ -1,0 +1,6 @@
+# iAPX286 @(#).proto	1.2
+#	@(#).proto	1.1
+cd $d
+ulimit $l
+umask $m
+$<

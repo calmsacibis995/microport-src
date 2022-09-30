@@ -1,0 +1,34 @@
+echo "do you want to build the issue floppies (y/n) ?"
+read ANS
+if [ "$ANS" = 'y' ]
+then
+	exec < .issueflop
+	while read PS ND IND REST
+	do
+		echo "make floppies for product set $PS (y/n) ?"
+		read ANS < /dev/tty
+		if [ "$ANS" = 'y' ]
+		then
+			END=`expr $ND`
+			NOW=0
+			while [ $END != $NOW ]
+			do
+				DISK=`expr $NOW + 1`
+				echo "\07insert floppy disk $DISK\c"
+				echo " for product set $PS, then type return\n"
+				read ANS < /dev/tty
+	
+				echo "$PS $DISK $ND" > diskdata
+				cpio_out -h diskdata
+				INDEX=`expr $IND + $NOW`
+				if [ $INDEX -lt 10 ]
+				then
+					cpio_out d/d0$INDEX 
+				else
+					cpio_out d/d$INDEX 
+				fi
+				NOW=`expr $NOW + 1`
+			done
+		fi
+	done
+fi

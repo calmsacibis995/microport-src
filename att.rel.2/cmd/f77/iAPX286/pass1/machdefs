@@ -1,0 +1,75 @@
+/* iAPX286 @(#)machdefs	1.2 85/09/06 */
+#ifndef TARGET
+TARGET NOT DEFINED !!!
+#endif
+#if TARGET!=IAPX286
+Target= TARGET OUT OF RANGE!!
+#endif
+
+#ifndef FAMILY
+FAMILY NOT DEFINED!!!
+#endif
+#if FAMILY!=PCC
+Family = FAMILY OUT OF RANGE
+#endif
+
+#define SDB 1
+#define TYLENG	TYLONG
+
+#define TYINT	TYLONG
+#if TARGET == IAPX286
+#define SZADDR	szaddr
+#define DEFSZADDR 2
+#else
+#define SZADDR	2
+#endif
+#define SZSHORT	2
+#define SZINT	4
+
+#define SZLONG	4
+#define SZLENG	4
+
+#define ALIADDR 2
+#define ALISHORT 2
+#define ALILONG 2
+#define ALIDOUBLE 2
+#define ALIINT	2
+#define ALILENG	2
+
+#define BACKAUTO 1 /* stack grows toward low memory */
+
+#define AUTOREG 7
+#define ARGREG 7
+#define CARGREG 5
+#if TARGET == IAPX286
+#define ARGOFFSET (modelflg == 0?4:6)
+#else
+#define ARGOFFSET 4
+#endif
+#define SAVESPACE 40
+
+
+#define FUDGEOFFSET 1
+#define BITSPERCHAR 8
+#define XL 8
+
+#define USETEXT	"\t.text"
+#define USECONST	"\t.data"
+#define USEBSS	"\t.bss"
+#define USEINIT	"\t.data"
+
+#define BLANKCOMMON "_BLNK_"
+
+#define LABELFMT "%s:\n"
+
+#define MAXREGVAR 4
+#define TYIREG TYSHORT
+#if HERE==VAX
+#define MSKIREG  (M(TYSHORT)|M(TYLONG))
+#else
+#define MSKIREG  M(TYSHORT)
+#endif
+
+#define NPERLINE 16
+#define NO2PERLINE 8
+#define NO4PERLINE 4

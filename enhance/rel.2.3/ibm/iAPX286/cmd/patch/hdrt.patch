@@ -1,0 +1,7 @@
+echo Transforming kernel file $1 into fixed-rooting kernel...\\\c
+patch $1 rootdev 0
+patch $1 pipedev 0
+patch $1 swapdev 0
+patch $1 nswap 4000
+patch $1 -l swplo 12000
+echo done

@@ -1,0 +1,18 @@
+MEMORY
+{
+	TEXT1: o=0x2000000, l=0x10000
+	TEXT2: o=0x2080000, l=0x10000
+	TEXT3: o=0x2100000, l=0x10000
+	TEXT4: o=0x2180000, l=0x10000
+	DATA: o=0x2200000, l=0x10000
+	BUFF: o=0x2280000, l=0x10000
+	CONF: o=0x2300000, l=0x10000
+	BSS: o=0x2380000, l=0x10000
+}
+SECTIONS
+{
+	.text: {} > TEXT1
+	.data: {} > DATA
+	.bss:  {} > BUFF
+}
+/*      @(#)ifile	1.2 - 85/08/02 */

@@ -1,0 +1,9 @@
+/* @(#)ifile	1.2 - 85/08/09 */
+SECTIONS
+{
+	GROUP:
+	{	.text: {}
+		.data: {}
+		.bss:  {}
+	}
+}

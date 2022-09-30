@@ -1,0 +1,61 @@
+SETKEY(1)							SETKEY(1)
+
+NAME 
+     setkey - programmable function keys
+
+SYNOPSIS
+     setkey [shift-mod] [shift-mod] ... key 'newstr'
+     setkey -p
+     setkey -d key
+
+DESCRIPTION
+     Setkey programs the following special keys on the system console:
+
+	 center  del   down  end    home   ins   left  minus
+	 pgdn    pgup  plus  prtsc  right  tab   up    f1
+	 f2      f3    f4    f5     f6     f7    f8    f9
+	 f10     f11   f12   f13    f14    f15   f16   f17
+	 f18     f19   f20   f21    f22    f23   f24   f25
+	 f26     f27   f28   f29    f30   
+ 
+The key 'center' is the '5' key on the numeric keypad. 'Left', 'right', 'up',
+and 'down' refer to the arrow keys.  The 'shift-mod' argument may be any
+combination of 'shift', 'alt' and 'control' (or 'ctrl') seperated by spaces.
+The function keys f11 through f20 are the corresponding f1 through f10 keys
+with a shift modifier of 'shift'.  The function keys f21 through f30 are the
+corresponding f1 through f10 keys with a shift modifier of 'control'.
+
+The 'newstr' argument is the replacement string to be sent when the
+corresponding key combination is pressed. To insert control characters in
+the 'newstr' argument, use the '^X' form for control character 'X' (and '^^'
+for '^').  If the 'newstr' argument is not present, the current value for
+the key is printed (to stdout). If the 'newstr' is a NULL string (ie., ''),
+the replacement string is deleted.
+
+The 'setkey -p' command prints the values of all the key settings.  It
+inserts the command name as the first argument so you can redirect the
+output to a file, edit the file, and execute the file to change the keymap
+settings.
+
+The 'setkey -d key' command deletes the the keymap setting for 'key'.  If
+'key' is not specified, all the keymap settings are deleted.
+
+'Setkey' by itself prints a help message, with the text of the message
+printed on stderr and the list of keys printed on stdout so it can be
+redirected to a file.
+
+There are a number of default settings, corresponding to the ANSI sequences,
+that are initialized for the system console in the /etc/rc.d/keybrd.rc file
+when the system comes up multi-user.  In addition, the setkey affects only
+the current virtual console unless it's on the system console, in which case
+it's also the default for the other consoles.  This also implies deleting
+the keymap on a virtual console (other than the system console) causes the
+keymap to revert to the defaults established for the system console.
+
+BUGS:
+     There is no way to distinguish the keys f11 through f30 with
+their shifted counterparts (ie., f11 is the same as shift f1).  Therefore,
+the following (for example) can occur:
+
+     Setting:              setkey f11 'format /dev/rdsk/0s24^M'
+     Printing (setkey -p): setkey shift f1 'format /dev/rdsk/0s24^M'

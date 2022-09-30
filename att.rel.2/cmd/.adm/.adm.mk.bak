@@ -1,0 +1,545 @@
+# iAPX286 @(#).adm.mk	1.8 - 85/09/01
+# Defaults to installing the disk configuration files for a 40 Mb system.
+# To install those for a 20Mb system override with DISK=disk20 .
+
+ROOT =
+LIB = $(ROOT)/usr/lib
+UUCP = $(LIB)/uucp
+CRONTABS = $(ROOT)/usr/spool/cron/crontabs
+LIBCRON = $(LIB)/cron
+UPUB = $(ROOT)/usr/pub
+INSDIR = $(ROOT)/etc
+TOUCH = touch
+DISK = disk40
+
+all::   .proto adm at.allow cron.allow filesave group motd profile         \
+	queuedefs root shutdown sys tapesave uucp umountall bcheckrc brc   \
+	$(DISK) checklist gettydefs inittab master passwd powerfail rc0 rc2 \
+	system system.mtc11 system.mtc12 system.un32 ioctl.syscon null     \
+	fstab mountall bsetdate acct.rc cron.rc uucp.rc MOUNT.rc stops.rc  \
+	TIMEZONE checkall motd ascii
+
+clobber:
+
+install:
+	make -f .adm.mk $(ARGS)
+
+disk20::
+	-if iAPX286;\
+	then cd iAPX286;\
+	     rm -f checklist fstab;\
+	     cp checklist.20 checklist;\
+	     cp fstab.20 fstab;\
+	fi
+
+disk40::
+	-if iAPX286;\
+	then cd iAPX286;\
+	     rm -f checklist fstab;\
+	     cp checklist.40 checklist;\
+	     cp fstab.40 fstab;\
+	fi
+
+adm::
+	cp adm $(CRONTABS)/adm
+	chmod 644 $(CRONTABS)/adm
+	chgrp sys $(CRONTABS)/adm
+	$(TOUCH) 0101000070 $(CRONTABS)/adm
+	chown root $(CRONTABS)/adm
+
+root::
+	cp root $(CRONTABS)/root
+	chmod 644 $(CRONTABS)/root
+	chgrp sys $(CRONTABS)/root
+	$(TOUCH) 0101000070 $(CRONTABS)/root
+	chown root $(CRONTABS)/root
+
+sys::
+	cp sys $(CRONTABS)/sys
+	chmod 644 $(CRONTABS)/sys
+	chgrp sys $(CRONTABS)/sys
+	$(TOUCH) 0101000070 $(CRONTABS)/sys
+	chown root $(CRONTABS)/sys
+
+uucp::
+	cp uucp $(CRONTABS)/uucp
+	chmod 644 $(CRONTABS)/uucp
+	chgrp sys $(CRONTABS)/uucp
+	$(TOUCH) 0101000070 $(CRONTABS)/uucp
+	chown root $(CRONTABS)/uucp
+
+.proto::
+	cp .proto $(LIBCRON)/.proto
+	chmod 744 $(LIBCRON)/.proto
+	chgrp sys $(LIBCRON)/.proto
+	$(TOUCH) 0101000070 $(LIBCRON)/.proto
+	chown root $(LIBCRON)/.proto
+
+at.allow::
+	cp at.allow $(LIBCRON)/at.allow
+	chmod 644 $(LIBCRON)/at.allow
+	chgrp sys $(LIBCRON)/at.allow
+	$(TOUCH) 0101000070 $(LIBCRON)/at.allow
+	chown root $(LIBCRON)/at.allow
+
+cron.allow::
+	cp cron.allow $(LIBCRON)/cron.allow
+	chmod 644 $(LIBCRON)/cron.allow
+	chgrp sys $(LIBCRON)/cron.allow
+	$(TOUCH) 0101000070 $(LIBCRON)/cron.allow
+	chown root $(LIBCRON)/cron.allow
+
+queuedefs::
+	cp queuedefs $(LIBCRON)/queuedefs
+	chmod 644 $(LIBCRON)/queuedefs
+	chgrp sys $(LIBCRON)/queuedefs
+	$(TOUCH) 0101000070 $(LIBCRON)/queuedefs
+	chown root $(LIBCRON)/queuedefs
+
+
+bcheckrc::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp bcheckrc.sh $(INSDIR)/bcheckrc;\
+	chmod 744 $(INSDIR)/bcheckrc;\
+	chgrp sys $(INSDIR)/bcheckrc;\
+	$(TOUCH) 0101000070 $(INSDIR)/bcheckrc;\
+	chown root $(INSDIR)/bcheckrc
+
+brc::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp brc.sh $(INSDIR)/brc;\
+	chmod 744 $(INSDIR)/brc;\
+	chgrp sys $(INSDIR)/brc;\
+	$(TOUCH) 0101000070 $(INSDIR)/brc;\
+	chown root $(INSDIR)/brc
+
+fstab::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp fstab $(INSDIR)/fstab;\
+	chmod 664 $(INSDIR)/fstab;\
+	chgrp sys $(INSDIR)/fstab;\
+	$(TOUCH) 0101000070 $(INSDIR)/fstab;\
+	chown root $(INSDIR)/fstab
+
+checklist::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp checklist $(INSDIR)/checklist;\
+	chmod 664 $(INSDIR)/checklist;\
+	chgrp sys $(INSDIR)/checklist;\
+	$(TOUCH) 0101000070 $(INSDIR)/checklist;\
+	chown root $(INSDIR)/checklist
+
+filesave:	filesave.sh
+	cp filesave.sh $(INSDIR)/filesave
+	chmod 744 $(INSDIR)/filesave
+	chgrp sys $(INSDIR)/filesave
+	$(TOUCH) 0101000070 $(INSDIR)/filesave
+	chown root $(INSDIR)/filesave
+
+gettydefs::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp gettydefs.sh $(INSDIR)/gettydefs;\
+	chmod 644 $(INSDIR)/gettydefs;\
+	chgrp sys $(INSDIR)/gettydefs;\
+	$(TOUCH) 0101000070 $(INSDIR)/gettydefs;\
+	chown root $(INSDIR)/gettydefs
+
+group::
+	cp group $(INSDIR)/group
+	chmod 644 $(INSDIR)/group
+	chgrp sys $(INSDIR)/group
+	$(TOUCH) 0101000070 $(INSDIR)/group
+	chown root $(INSDIR)/group
+
+inittab::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp inittab.sh $(INSDIR)/inittab;\
+	chmod 644 $(INSDIR)/inittab;\
+	chgrp sys $(INSDIR)/inittab;\
+	$(TOUCH) 0101000070 $(INSDIR)/inittab;\
+	chown root $(INSDIR)/inittab
+
+ioctl.syscon::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp ioctl.syscon $(INSDIR)/ioctl.syscon;\
+	chmod 644 $(INSDIR)/ioctl.syscon;\
+	chgrp sys $(INSDIR)/ioctl.syscon;\
+	$(TOUCH) 0101000070 $(INSDIR)/ioctl.syscon;\
+	chown root $(INSDIR)/ioctl.syscon
+
+master::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp master $(INSDIR)/master;\
+	chmod 644 $(INSDIR)/master;\
+	chgrp sys $(INSDIR)/master;\
+	chown root $(INSDIR)/master
+
+motd:	motd.sh
+	cp motd.sh $(INSDIR)/motd
+	chmod 644 $(INSDIR)/motd
+	chgrp sys $(INSDIR)/motd
+	chown root $(INSDIR)/motd
+
+passwd::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp passwd $(INSDIR)/passwd;\
+	chmod 644 $(INSDIR)/passwd;\
+	chgrp sys $(INSDIR)/passwd;\
+	$(TOUCH) 0101000070 $(INSDIR)/passwd;\
+	chown root $(INSDIR)/passwd
+
+powerfail::
+	-if iAPX286;\
+	then cd iAPX286;\
+	elif /bin/vax;\
+	then cd vax;\
+	elif /bin/pdp11;\
+	then cd pdp11;\
+	elif /bin/u3b5;\
+	then cd u3b5;\
+	else cd u3b;\
+	fi;\
+	cp powerfail.sh $(INSDIR)/powerfail;\
+	chmod 744 $(INSDIR)/powerfail;\
+	chgrp sys $(INSDIR)/powerfail;\
+	$(TOUCH) 0101000070 $(INSDIR)/powerfail;\
+	chown root $(INSDIR)/powerfail
+
+profile:	profile.sh
+	cp profile.sh $(INSDIR)/profile
+	chmod 664 $(INSDIR)/profile
+	chgrp bin $(INSDIR)/profile
+	$(TOUCH) 0101000070 $(INSDIR)/profile
+	chown bin $(INSDIR)/profile
+
+rc0::
+	cp rc0.sh $(INSDIR)/rc0;\
+	chmod 744 $(INSDIR)/rc0;\
+	chgrp sys $(INSDIR)/rc0;\
+	$(TOUCH) 0101000070 $(INSDIR)/rc0;\
+	chown root $(INSDIR)/rc0
+
+rc2::
+	cp rc2.sh $(INSDIR)/rc2;\
+	chmod 744 $(INSDIR)/rc2;\
+	chgrp sys $(INSDIR)/rc2;\
+	$(TOUCH) 0101000070 $(INSDIR)/rc2;\
+	chown root $(INSDIR)/rc2
+
+shutdown:	shutdown.sh
+	cp shutdown.sh $(INSDIR)/shutdown
+	chmod 744 $(INSDIR)/shutdown
+	chgrp sys $(INSDIR)/shutdown
+	$(TOUCH) 0101000070 $(INSDIR)/shutdown
+	chown root $(INSDIR)/shutdown
+
+tapesave:	tapesave.sh
+	cp tapesave.sh $(INSDIR)/tapesave
+	chmod 744 $(INSDIR)/tapesave
+	chgrp sys $(INSDIR)/tapesave
+	$(TOUCH) 0101000070 $(INSDIR)/tapesave
+	chown root $(INSDIR)/tapesave
+
+system::
+	-if /bin/u3b;\
+	then cd u3b;\
+		cp system $(INSDIR)/system;\
+		chmod 644 $(INSDIR)/system;\
+		chgrp sys $(INSDIR)/system;\
+		$(TOUCH) 0101000070 $(INSDIR)/system;\
+		chown root $(INSDIR)/system;\
+	fi
+
+system.mtc11::
+	-if /bin/u3b;\
+	then cd u3b;\
+		cp system.32 $(INSDIR)/system.mtc11;\
+		chmod 644 $(INSDIR)/system.mtc11;\
+		chgrp sys $(INSDIR)/system.mtc11;\
+		$(TOUCH) 0101000070 $(INSDIR)/system.mtc11;\
+		chown root $(INSDIR)/system.mtc11;\
+	fi
+
+system.mtc12::
+	-if /bin/u3b;\
+	then cd u3b;\
+		cp system.32 $(INSDIR)/system.mtc12;\
+		chmod 644 $(INSDIR)/system.mtc12;\
+		chgrp sys $(INSDIR)/system.mtc12;\
+		$(TOUCH) 0101000070 $(INSDIR)/system.mtc12;\
+		chown root $(INSDIR)/system.mtc12;\
+	fi
+
+system.un32::
+	-if /bin/u3b;\
+	then cd u3b;\
+		cp system.32 $(INSDIR)/system.un32;\
+		chmod 644 $(INSDIR)/system.un32;\
+		chgrp sys $(INSDIR)/system.un32;\
+		$(TOUCH) 0101000070 $(INSDIR)/system.un32;\
+		chown root $(INSDIR)/system.un32;\
+	fi
+
+null::
+	if [ ! -d $(INSDIR)/log ]       ;\
+	then mkdir $(INSDIR)/log       ;\
+	fi                              ;\
+	> $(INSDIR)/log/filesave.log
+	chmod 664 $(INSDIR)/log/filesave.log
+	chgrp sys $(INSDIR)/log/filesave.log
+	$(TOUCH) 0101000070 $(INSDIR)/log/filesave.log
+	chown root $(INSDIR)/log/filesave.log
+	> $(INSDIR)/mnttab
+	chmod 644 $(INSDIR)/mnttab
+	chgrp sys $(INSDIR)/mnttab
+	$(TOUCH) 0101000070 $(INSDIR)/mnttab
+	chown root $(INSDIR)/mnttab
+	> $(INSDIR)/utmp
+	chmod 664 $(INSDIR)/utmp
+	chgrp bin $(INSDIR)/utmp
+	$(TOUCH) 0101000070 $(INSDIR)/utmp
+	chown bin $(INSDIR)/utmp
+	> $(INSDIR)/wtmp
+	chmod 664 $(INSDIR)/wtmp
+	chgrp adm $(INSDIR)/wtmp
+	$(TOUCH) 0101000070 $(INSDIR)/wtmp
+	chown adm $(INSDIR)/wtmp
+	if [ ! -d $(ROOT)/usr/adm ]     ;\
+	then mkdir $(ROOT)/usr/adm      ;\
+	fi                              ;\
+	> $(ROOT)/usr/adm/pacct
+	chmod 664 $(ROOT)/usr/adm/pacct
+	chgrp adm $(ROOT)/usr/adm/pacct
+	$(TOUCH) 0101000070 $(ROOT)/usr/adm/pacct
+	chown adm $(ROOT)/usr/adm/pacct
+	> $(ROOT)/usr/adm/sulog
+	chmod 600 $(ROOT)/usr/adm/sulog
+	chgrp root $(ROOT)/usr/adm/sulog
+	$(TOUCH) 0101000070 $(ROOT)/usr/adm/sulog
+	chown root $(ROOT)/usr/adm/sulog
+	-if iAPX286;\
+	then :;\
+	else > $(ROOT)/usr/games/advlog;\
+		chmod 666 $(ROOT)/usr/games/advlog;\
+		chgrp bin $(ROOT)/usr/games/advlog;\
+		$(TOUCH) 0101000070 $(ROOT)/usr/games/advlog;\
+		chown bin $(ROOT)/usr/games/advlog;\
+	fi ;\
+	> $(LIBCRON)/log
+	chmod 664 $(LIBCRON)/log
+	chgrp bin $(LIBCRON)/log
+	$(TOUCH) 0101000070 $(LIBCRON)/log
+	chown bin $(LIBCRON)/log
+	if [ ! -d $(ROOT)/usr/lib/spell ]       ;\
+	then    mkdir $(ROOT)/usr/lib/spell     ;\
+	fi                                      ;\
+	> $(ROOT)/usr/lib/spell/spellhist
+	chmod 666 $(ROOT)/usr/lib/spell/spellhist
+	chgrp bin $(ROOT)/usr/lib/spell/spellhist
+	$(TOUCH) 0101000070 $(ROOT)/usr/lib/spell/spellhist
+	chown bin $(ROOT)/usr/lib/spell/spellhist
+	> $(UUCP)/L_stat
+	chmod 644 $(UUCP)/L_stat
+	chgrp bin $(UUCP)/L_stat
+	$(TOUCH) 0101000070 $(UUCP)/L_stat
+	chown uucp $(UUCP)/L_stat
+	> $(UUCP)/L_sub
+	chmod 644 $(UUCP)/L_sub
+	chgrp bin $(UUCP)/L_sub
+	$(TOUCH) 0101000070 $(UUCP)/L_sub
+	chown uucp $(UUCP)/L_sub
+	> $(UUCP)/R_stat
+	chmod 644 $(UUCP)/R_stat
+	chgrp bin $(UUCP)/R_stat
+	$(TOUCH) 0101000070 $(UUCP)/R_stat
+	chown uucp $(UUCP)/R_stat
+	> $(UUCP)/R_sub
+	chmod 644 $(UUCP)/R_sub
+	chgrp bin $(UUCP)/R_sub
+	$(TOUCH) 0101000070 $(UUCP)/R_sub
+	chown uucp $(UUCP)/R_sub
+	if [ ! -d $(ROOT)/usr/spool/lp ]        ;\
+	then mkdir $(ROOT)/usr/spool/lp      ;\
+	fi                                      ;\
+	> $(ROOT)/usr/spool/lp/outputq
+	chmod 644 $(ROOT)/usr/spool/lp/outputq
+	chgrp bin $(ROOT)/usr/spool/lp/outputq
+	$(TOUCH) 0101000070 $(ROOT)/usr/spool/lp/outputq
+	chown lp $(ROOT)/usr/spool/lp/outputq
+	> $(ROOT)/usr/spool/lp/pstatus
+	chown lp $(ROOT)/usr/spool/lp/pstatus
+	chgrp bin $(ROOT)/usr/spool/lp/pstatus
+	$(TOUCH) 0101000070 $(ROOT)/usr/spool/lp/pstatus
+	chmod 644 $(ROOT)/usr/spool/lp/pstatus
+	> $(ROOT)/usr/spool/lp/qstatus
+	chmod 644 $(ROOT)/usr/spool/lp/qstatus
+	chgrp bin $(ROOT)/usr/spool/lp/qstatus
+	$(TOUCH) 0101000070 $(ROOT)/usr/spool/lp/qstatus
+	chown lp $(ROOT)/usr/spool/lp/qstatus
+
+mountall:       mountall.sh
+	cp mountall.sh $(INSDIR)/mountall
+	chmod 744 $(INSDIR)/mountall
+	chgrp sys $(INSDIR)/mountall
+	$(TOUCH) 0101000070 $(INSDIR)/mountall
+	chown root $(INSDIR)/mountall
+
+umountall:	umountall.sh
+	cp umountall.sh $(INSDIR)/umountall
+	chmod 744 $(INSDIR)/umountall
+	chgrp sys $(INSDIR)/umountall
+	$(TOUCH) 0101000070 $(INSDIR)/umountall
+	chown root $(INSDIR)/umountall
+
+bsetdate:	bsetdate.sh
+	cp bsetdate.sh $(INSDIR)/bsetdate
+	chmod 744 $(INSDIR)/bsetdate
+	chgrp sys $(INSDIR)/bsetdate
+	$(TOUCH) 0101000070 $(INSDIR)/bsetdate
+	chown root $(INSDIR)/bsetdate
+
+TIMEZONE:	TIMEZONE.sh
+	cp TIMEZONE.sh $(INSDIR)/TIMEZONE
+	chmod 744 $(INSDIR)/TIMEZONE
+	chgrp sys $(INSDIR)/TIMEZONE
+	$(TOUCH) 0101000070 $(INSDIR)/TIMEZONE
+	chown root $(INSDIR)/TIMEZONE
+
+ascii:
+	if [ ! -d $(UPUB) ] ;\
+	then mkdir $(UPUB)  ;\
+	fi
+	cp ascii $(UPUB)
+	chmod -w $(UPUB)/ascii
+
+acct.rc:	acct.rc.sh
+	if [ ! -d $(INSDIR)/rc.d ] ;\
+	then mkdir $(INSDIR)/rc.d ;\
+	fi
+	cp acct.rc.sh $(INSDIR)/rc.d/acct.rc
+	chmod 744 $(INSDIR)/rc.d/acct.rc
+	chgrp sys $(INSDIR)/rc.d/acct.rc
+	$(TOUCH) 0101000070 $(INSDIR)/rc.d/acct.rc
+	chown root $(INSDIR)/rc.d/acct.rc
+
+cron.rc:	cron.rc.sh
+	if [ ! -d $(INSDIR)/rc.d ] ;\
+	then mkdir $(INSDIR)/rc.d ;\
+	fi
+	cp cron.rc.sh $(INSDIR)/rc.d/cron.rc
+	chmod 744 $(INSDIR)/rc.d/cron.rc
+	chgrp sys $(INSDIR)/rc.d/cron.rc
+	$(TOUCH) 0101000070 $(INSDIR)/rc.d/cron.rc
+	chown root $(INSDIR)/rc.d/cron.rc
+
+uucp.rc:	uucp.rc.sh
+	if [ ! -d $(INSDIR)/rc.d ] ;\
+	then mkdir $(INSDIR)/rc.d  ;\
+	fi
+	cp uucp.rc.sh $(INSDIR)/rc.d/uucp.rc
+	chmod 744 $(INSDIR)/rc.d/uucp.rc
+	chgrp sys $(INSDIR)/rc.d/uucp.rc
+	$(TOUCH) 0101000070 $(INSDIR)/rc.d/uucp.rc
+	chown root $(INSDIR)/rc.d/uucp.rc
+
+MOUNT.rc:	MOUNT.rc.sh
+	if [ ! -d $(INSDIR)/rc.d ] ;\
+	then mkdir $(INSDIR)/rc.d;\
+	fi
+	cp MOUNT.rc.sh $(INSDIR)/rc.d/MOUNT.rc
+	chmod 744 $(INSDIR)/rc.d/MOUNT.rc
+	chgrp sys $(INSDIR)/rc.d/MOUNT.rc
+	$(TOUCH) 0101000070 $(INSDIR)/rc.d/MOUNT.rc
+	chown root $(INSDIR)/rc.d/MOUNT.rc
+
+stops.rc:	stops.rc.sh
+	if [ ! -d $(INSDIR)/shutdown.d ] ;\
+	then mkdir $(INSDIR)/shutdown.d   ;\
+	fi
+	cp stops.rc.sh $(INSDIR)/shutdown.d/stops.rc
+	chmod 744 $(INSDIR)/shutdown.d/stops.rc
+	chgrp sys $(INSDIR)/shutdown.d/stops.rc
+	$(TOUCH) 0101000070 $(INSDIR)/shutdown.d/stops.rc
+	chown root $(INSDIR)/shutdown.d/stops.rc
+

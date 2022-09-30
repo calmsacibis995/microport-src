@@ -1,0 +1,8 @@
+# This script prints out the OS's name, release, version, and machine
+# names for customer support purposes.
+
+sys=`patch /system5 -s utsname`
+rel=`patch /system5 -s +18 utsname`
+ver=`patch /system5 -s +27 utsname`
+mach=`patch /system5 -s +36 utsname`
+echo Microport product "'"$sys"'", version "#"$ver, release "#"$rel, for the $mach

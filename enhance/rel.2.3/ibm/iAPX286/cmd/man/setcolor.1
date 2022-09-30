@@ -1,0 +1,19 @@
+
+SETCOLOR(1)							SETCOLOR(1)
+
+NAME 
+	setcolor \- Set foreground and background colors
+
+SYNOPSIS
+	setcolor [[ -bBfF ] color1 ] [ -bBfF ] color2
+
+DESCRIPTION
+
+	Setcolor sets the text mode foreground and background colors 
+on the Color, Enhanced, and Professional Graphics Adapters.
+	Setcolor -b denotes a dark background color, setcolor -B a 
+bright one, -f a dark foreground color, and -F a bright one.
+If no options, color1 is assumed to be a dark background color,
+and color2 is assumed to be a dark foreground color.  Thus,
+setcolor color is assumed to mean setcolor -f color, and setcolor color1
+color2 is assumed to mean setcolor -b color -f color.

@@ -1,0 +1,199 @@
+#ident	"@(#)ccs-s5:xenv/i286/pathedit	1.11"
+#
+#	Cross Pathedit for i286 SGS
+#
+#
+#	This script is executed by master pathedit when building
+#	cross SGS for Unix target.
+#
+
+mach=i286
+echo "exit 255" >vax
+echo "exit 255" >u3b
+echo "exit 255" >u370
+echo "exit 255" >u3b5
+echo "exit 255" >u3b2
+cp /dev/null iAPX286
+chmod 755 vax u3b u370 u3b5 u3b2 iAPX286
+eval `id | sed 's/([^)]*)//gp'`
+
+__MACH=D_$mach
+
+BASE=`cd ../../../../../..; pwd`
+SGSBASE=`cd ../..; pwd`
+
+__PROOT=""
+__INCDIR=$SGSBASE/inc/i286
+__TMPDIR=/tmp
+__DBO=FBO
+
+cont="T"
+echo "Do you want the SGS built with the default parameters? (y or n): \c"
+while [ "$cont" = "T" ]
+do
+	x=`line`
+	if [ "$x" = "y" ]
+	then
+		stdparam="T"
+		cont="F"
+	elif [ "$x" = "n" ]
+	then
+		stdparam="F"
+		cont="F"
+	else
+		echo "Please type 'y' or 'n': \c"
+	
+	fi
+done
+
+if [ "$stdparam" = "T" ]
+then
+	__BINDIR=$BASE/$mach/bin
+	__LIBDIR=$BASE/$mach/lib
+	__USRINC=$BASE/$mach/usr/include
+	__PREFIX=$mach
+	__MAC=ABWRMAC
+	__OWN=$uid
+	__GRP=$gid
+else
+
+	echo "Enter absolute directory for run-time binaries:  \c"
+	__BINDIR=`line`
+	if [ -z "$__BINDIR" ]
+	then
+		__BINDIR=$BASE/$mach/bin
+	fi
+
+	echo "Enter absolute directory for run-time libraries:  \c"
+	__LIBDIR=`line`
+	if [ -z "$__LIBDIR" ]
+	then
+		__LIBDIR=$BASE/$mach/lib
+	fi
+
+	echo "Enter absolute directory for header files:  \c"
+	__USRINC=`line`
+	if [ -z "$__USRINC" ]
+	then
+		__USRINC=$BASE/$mach/usr/include
+	fi
+
+	echo "Enter generic prefix for names:  \c"
+	x=`line`
+	__PREFIX=${x:=$mach}
+
+	echo "Enter owner of executables:  \c"
+	x=`line`
+	__OWN=${x:=$uid}
+
+	echo "Enter group of executables:  \c"
+	x=`line`
+	__GRP=${x:=$gid}
+fi
+
+if /bin/vax
+then
+	__ARCH=AR32WR
+else
+	echo "Vax is currently the only host for the"
+	echo "\ti286 Cross Compilation System"
+fi
+
+__CPP=$__LIBDIR/cpp
+
+echo "\n These parameters are used for your SGS:\n"
+echo "BINDIR:		$__BINDIR"
+echo "LIBDIR:		$__LIBDIR"
+echo "USRINC:		$__USRINC"
+echo "PREFIX:		$__PREFIX"
+echo "MAC:		$__MAC"
+echo "OWN:		$__OWN"
+echo "GRP:		$__GRP"
+echo "Do you want the CCS built with these parameters? (y or n): \c"
+x=`line`
+if [ "$x" = "n" ]
+then
+	echo "run pathedit again"
+	rm vax u3b u370 u3b5 u3b2 iAPX286
+	exit
+fi
+cp paths.h ../../inc/i286/paths.h
+cp sgs.h ../../inc/i286/sgs.h
+chmod 0644 ../../inc/i286/paths.h ../../inc/i286/sgs.h
+echo "\n ******** Making paths.h ********"
+ed ../../inc/i286/paths.h <<!
+1,\$s|SGS|$__PREFIX|g
+1,\$s|I286BINDIR|$__BINDIR|
+1,\$s|I286LIBDIR|$__LIBDIR|
+1,\$s|I286INCDIR|$__INCDIR|
+1,\$s|I286TMPDIR|$__TMPDIR|
+1,\$s|I286CPP|$__CPP|
+w
+q
+!
+echo "\n ******** Making sgs.h ********"
+ed ../../inc/i286/sgs.h <<Y
+g|SGS|s|".*"|"$__PREFIX"|
+w
+q
+Y
+
+# Makefile for native build
+cp sgs.mk.i286 ../../sgs.mk
+
+echo "\n ******** Making global makefile for cross build ********"
+ed ./xsgs.mk.i286 <<X
+1,\$s|^SGS.*|SGS=$__PREFIX|
+1,\$s|^BINDIR.*|BINDIR=$__BINDIR|
+w ../../xsgs.mk
+q
+X
+chmod 0644 ../../xsgs.mk
+
+echo "\n ******** Making SGS makefile ********"
+ed template.mk <<X
+1,\$s|^BINDIR.*|BINDIR=$__BINDIR|
+1,\$s|^LIBDIR.*|LIBDIR=$__LIBDIR|
+1,\$s|^INCDIR.*|INCDIR=$__INCDIR|
+1,\$s|^USRINC.*|USRINC=$__USRINC|
+1,\$s|^SGS=.*|SGS=$__PREFIX|
+1,\$s|^SGSBASE.*|SGSBASE=$SGSBASE|
+1,\$s|^ARCH.*|ARCH=$__ARCH|
+1,\$s|^ROOT.*|ROOT=$__PROOT|
+1,\$s|^OWN.*|OWN=$__OWN|
+1,\$s|^GRP.*|GRP=$__GRP|
+w makefile
+q
+X
+chmod 0644 makefile
+
+echo "\n ******** Making front-end to make ********"
+ed make-i286 <<X
+1,\$s|xxx|$__PREFIX|g
+1,\$s|lll|$__LIBDIR|g
+1,\$s|^MAKECMD=.*|MAKECMD=/bin/make|
+w make.tmp
+q
+X
+chmod 777 make.tmp
+
+echo "\n ******** Making cross environment script ********"
+chmod 777 env-i286
+ed env-i286 <<X
+1,\$s|^ROOT.*|ROOT=$BASE|
+1,\$s|^PATH.*|PATH=$__BINDIR:\$PATH|
+w
+q
+X
+chmod 0644 $BASE/usr/src/:mkxlib
+if [ -w $BASE/usr/src/:mkxlib ]
+then echo "\n ******** Editing library makefile paths ********"
+ed $BASE/usr/src/:mkxlib <<X
+,s%^LIB=.*%LIB=$__LIBDIR%
+,s%^INC=.*%INC=$__USRINC%
+w
+q
+X
+else
+	echo "\n ******** Warning: could not edit" $BASE/usr/src/:mkxlib "\n"
+fi

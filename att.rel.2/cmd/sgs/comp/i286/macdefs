@@ -1,0 +1,140 @@
+#/*   @(#)macdefs	1.4 - 85/08/20 */
+# define makecc(val,i)  lastcon = i ? (val<<8)|lastcon : val  
+
+# define MDL_SMALL  1
+# define MDL_MIDDLE 2
+# define MDL_LARGE  3
+# define MDL_HUGE   4
+
+# define AX 0
+# define DX 1
+# define SI 2
+# define BX 3
+# define CX 4
+# define DI 5
+# define SP 6	/* stack pointer */
+# define BP 7	/* frame pointer */
+# define SS 8	/* stack segment selector */
+# define DS 9	/* data  segment selector */
+# define ES 10	/* escape segment selector */
+# define CS 11	/* code  segment selector */
+# define ST0 12	/* top of float stack */
+# define ST1 13 /* next on float stack */
+
+# define  ARGINIT	arginit() 
+# define  AUTOINIT	0 
+# define  SZCHAR	8
+# define  SZINT		16
+# define  SZFLOAT	32
+# define  SZDOUBLE	64	/* double same as float for now */
+# define  SZLONG	32
+# define  SZSHORT	16
+# define  SZPOINT	16
+# define  SZLPOINT      32
+# ifndef VARALIGN
+# define  ALCHAR       8
+# define  ALINT        16
+# define  ALFLOAT      16
+# define  ALDOUBLE     16
+# define  ALLONG       16
+# define  ALSHORT      16
+# define  ALPOINT      16
+# define  ALLPOINT     16
+# define  ALSTRUCT     16
+# define  ALSTACK      16
+# else
+extern int  ALCHAR   ;
+extern int  ALINT    ;
+extern int  ALFLOAT  ;
+extern int  ALDOUBLE ;
+extern int  ALLONG   ;
+extern int  ALSHORT  ;
+extern int  ALPOINT  ;
+extern int  ALLPOINT ;
+extern int  ALSTRUCT ;
+extern int  ALSTACK  ;
+# endif
+
+/*	size in which constants are converted */
+/*	should be long if feasable */
+
+# define CONSZ long
+# define CONFMT "%ld"
+
+#ifdef ONEPASS
+# define LABFMT ".%d"
+#else
+# define LABFMT ".%d\n"
+# define EXPR '&'	/* redefine, original in manifest */
+#endif
+
+/*	size in which offsets are kept
+ *	should be large enough to cover address space in bits
+ */
+
+# define OFFSZ long
+# define MAXAUTO 	( 0x8000L * SZCHAR)
+# define MAXSTATIC	(0x10000L * SZCHAR)
+# define MAXSTRUCT	(0x10000L * SZCHAR)
+# define STKOFFSZ(lval)	( *((OFFSZ *) &lval) )
+
+/* 	character set macro */
+
+# define  CCTRANS(x) x
+
+/* register cookie for stack pointer */
+
+# define  STKREG 7
+# define  ARGREG 7
+
+/*	maximum and minimum register variables */
+
+extern int MAXRVAR;       /* %di = 5   %cx = 4 */
+extern int MINRVAR;
+
+/* DON'T apply clocal() to SCONV and PCONV ops as they are built */
+/* This option fouls up constant handling (e.g. pointer scaling) */
+
+# undef EARLYOPT
+
+/* definition indicates automatics and/or temporaries
+   are on a negative growing stack */
+
+# define BACKAUTO
+# define BACKTEMP
+
+/* bytes are numbered right to left in a word */
+# define RTOLBYTES
+
+# define STDPRTREE
+
+/* function definitions for symbolic debugging */
+# define FIXDEF(p) fixdef(p)
+# define FIXSTRUCT(p,q) strend(p)
+
+/* locctr symbol for .bss section */
+# define BSS	10
+# define EXIT dexit
+
+#define aobeg() /* function called before removing automatics from stab */
+#define aocode(p) /* function called when automatic p removed from stab */
+
+# if pdp11
+#	define BCSZ 100		/* table size to save break, continue labels */
+#	define SYMTSZ 700	/* size of the symbol table */
+#	define DIMTABSZ 1000	/* size of the dimension/size table */
+#	define BNEST 30		/* Block Nesting Depth */
+#	define PARAMSZ 150	/* size of the parameter stack */
+#	define SWITSZ 250	/* size of switch table */
+# else
+#	define BCSZ 100		/* table size to save break, continue labels */
+#	ifndef SYMTSZ
+#	   define SYMTSZ 1300	/* size of the symbol table */
+#	endif
+#	ifndef DIMTABSZ
+#	   define DIMTABSZ 3000	/* size of the dimension/size table */
+#	endif
+#	define BNEST 30		/* Block Nesting Depth */
+#	define PARAMSZ 150	/* size of the parameter stack */
+#	define SWITSZ 500	/* size of switch table */
+# endif

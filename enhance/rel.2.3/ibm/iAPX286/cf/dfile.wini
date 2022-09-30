@@ -1,0 +1,32 @@
+* @(#)dfile.microport	2.3
+* Copyright 1986,1987,1988 by Microport.  All Rights Reserved
+* Default configuration settings for Winchester rooted kernel.
+wini	0	2
+flop	0	1
+rdswap	0	1
+root	wini	0
+pipe	wini	0
+swap	wini	1	20000	6000
+dump	wini	0
+asy	0	4
+*sxt	0	8
+lp	0	3
+*ct	0	1
+*prf	0	1	
+*gfx	0	8
+kd	0	8
+cmos	0	1
+emul	0
+buffers	0	* 2.3.0, default to table lookup
+inodes	125	* 2.2
+files	120	* 2.3.0
+mounts	8
+swapmap	75
+coremap	150	* 1.3.8
+calls	50
+procs	75	* 2.2
+texts	40
+clists	0	* 2.3.0, default to table lookup
+mesg	1	* 1.3.8
+shmem	1	* 1.3.8
+sema	1	* 1.3.8

@@ -1,0 +1,61 @@
+#	@(#)	1.3
+#	spell native make file
+
+# _SH_ is used by 3B5 View-path environment
+
+ROOT = ../..
+OL = $(ROOT)/
+SL = $(ROOT)/usr/src/cmd
+RDIR = ${SL}/spell
+INS = :
+REL = current
+CSID = -r`gsid spellcode ${REL}`
+DSID = -r`gsid spelldata ${REL}`
+SHSID = -r`gsid spell.sh ${REL}`
+CMPRSID = -r`gsid compress.sh ${REL}`
+MKSID = -r`gsid spell.mk ${REL}`
+BIN = P108
+LIST = opr -ttx -b${BIN}
+CINSDIR = ${OL}usr/bin
+PINSDIR = ${OL}usr/lib/spell
+#IFLAG = -i
+SMFLAG = -Ml
+CFLAGS = -O
+DFILES = american british local list extra stop
+MAKE = make
+
+alldata: hlista hlistb hstop
+	rm htemp1
+	(cd ../.. ; find usr/lib/spell/hlista usr/lib/spell/hlistb \
+		usr/lib/spell/hstop -print | cpio -oc > local/spell.hashlibs)
+
+htemp1:	list local extra hashmk1
+	cat list local extra | $(_SH_) $(PINSDIR)/hashmake >htemp1
+
+hlista:  american  hashmk1  spellin1 htemp1
+	$(_SH_) $(PINSDIR)/hashmake <american |sort -u - htemp1 >htemp2
+	$(_SH_) $(PINSDIR)/spellin `wc htemp2|sed -n 's/\([^ ]\) .*/\1/p' ` <htemp2 >hlista
+	chmod 644 hlista
+	cp hlista $(PINSDIR)
+	rm htemp2
+
+hlistb:  british hashmk1 spellin1 htemp1
+	$(_SH_) $(PINSDIR)/hashmake <british |sort -u - htemp1 >htemp2
+	$(_SH_) $(PINSDIR)/spellin `wc htemp2|sed -n 's/\([^ ]\) .*/\1/p' ` <htemp2 >hlistb
+	chmod 644 hlistb
+	cp hlistb $(PINSDIR)
+	rm htemp2
+
+
+hstop:	 stop spellin1 hashmk1
+	$(_SH_) $(PINSDIR)/hashmake <stop | sort -u >htemp2
+	$(_SH_) $(PINSDIR)/spellin `wc htemp2|sed -n 's/\([^ ]\) .*/\1/p' ` <htemp2 >hstop
+	chmod 644 hstop
+	cp hstop $(PINSDIR)
+	rm htemp2
+
+hashmk1:	$(PINSDIR)/hashmake
+
+spellin1:	$(PINSDIR)/spellin
+clobber:
+	cd .. ;	rm -rf local

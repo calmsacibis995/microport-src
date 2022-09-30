@@ -1,0 +1,117 @@
+#       @(#):mkuts	1.6 - 85/08/15
+#
+#       make an iAPX286 kernel
+#
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 kernel"
+
+TYPE=
+C=
+
+if [ $# -lt 1 ]
+then
+#       Print usage and exit
+echo
+echo "$0 type [SYS=sys] [VER=ver] [REL=rel] [NODE=node] [MACH=mach]"
+echo "$0 clean"
+echo "$0 clobber"
+echo
+echo '  type = wini20 (Winnie image 20 meg)'
+echo '         wini40 (Winnie image 40 meg)'
+echo '         flop   (Floppy image)'
+echo
+exit 1
+fi
+
+if [ $1 = clean ]
+then echo "make clean"
+C=clean
+elif [ $1 = clobber ]
+then echo "make clobber"
+C=clobber
+elif [ $1 = wini20 ]
+then echo "make wini20"
+TYPE=wini20
+elif [ $1 = wini40 ]
+then echo "make wini40"
+TYPE=wini40
+elif [ $1 = flop ]
+then echo "make floppy"
+TYPE=flop
+else echo "illegal option $1"
+exit 1
+fi
+shift
+
+cd uts/iAPX286
+
+if [ x$C = x ]
+then
+make -f super.mk
+fi
+
+cd pwb
+if [ $# -gt 0 ]
+then
+make -f pwb.mk $C "$@"
+else
+make -f pwb.mk $C
+fi
+
+cd ../os
+if [ $# -gt 0 ]
+then
+make -f os.mk $C "$@"
+else
+make -f os.mk $C
+fi
+
+cd ../ml
+if [ $# -gt 0 ]
+then
+make -f ml.mk $C "$@"
+else
+make -f ml.mk $C
+fi
+
+cd ../io
+if [ $# -gt 0 ]
+then
+make -f io.mk $C "$@"
+else
+make -f io.mk $C
+fi
+
+cd ../em
+if [ $# -gt 0 ]
+then
+make -f em.mk $C "$@"
+else
+make -f em.mk $C
+fi
+
+cd ../cf
+if [ $# -gt 0 ]
+then
+make -f cf.mk $TYPE $C "$@"
+else
+make -f cf.mk $TYPE $C
+fi
+cd ..
+
+if [ x$C = xclobber ]
+then
+rm -f $NAME ${SYS:-unix}${VER:-1}
+fi

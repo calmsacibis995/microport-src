@@ -1,0 +1,947 @@
+/*	Copyright (c) 1985 AT&T	*/
+/*	  All Rights Reserved  	*/
+
+/*	THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T	*/
+/*	The copyright notice above does not evidence any   	*/
+/*	actual or intended publication of such source code.	*/
+
+#/*   @(#)table.c	1.3 - 85/08/09 */
+# include "mfile2"
+
+# define EADD SNAME|SOREG
+# define AWD EADD|SCON
+# define SREG SAREG|SBREG
+# define NABREG EITHER|NAREG|NBREG
+# define NABSL NASL|NBSL
+# define NABSR NASR|NBSR
+
+# define EM(op) \
+op,	FOREFF|INTAREG|INTBREG|FORARG|FORCC|INTEMP,\
+	SANY,	TANY,\
+	SANY,	TANY,\
+		REWRITE,	MNOPE,\
+		0
+
+struct optab  table[] = {
+
+/* format of a table entry:
+ *
+ *	node_type,	cookie,
+ *		shape_of_left_child,	type_of_left_child,
+ *		shape_of_right_child,	type_of_right_child,
+ *			resources_required,	rewriting_rule,
+ *			" assembly_language_output ",
+ */
+
+
+ASSIGN, FOREFF|INTAREG|INTBREG,
+	SLARGE|EADD,	TPOINT,
+	SREG|SCON,	TPOINT,
+		0,	RLEFT|RRIGHT,
+		"\tmov\tAR,AL\nZY\tmov\tZRQ,ULD:\t/ assign 1:\n",
+
+ASSIGN,	FOREFF|INTAREG|INTBREG,
+	SREG,	TPOINT|TINT|TUNSIGNED,
+	SZERO,	TPOINT|TINT,
+		0,	RLEFT|RRIGHT,
+		"\txor\tAL,ALD:\t/ assign 2:\n",
+
+ASSIGN,	FOREFF|INTAREG|INTBREG,
+	SREG,		TPOINT|TINT|TUNSIGNED,
+	SREG|AWD,	TPOINT|TINT|TUNSIGNED,
+		0,	RLEFT|RRIGHT,
+		"\tmov\tAR,ALD:\t/ assign 3:\n",
+
+ASSIGN,	FOREFF|INTAREG|INTBREG,
+	EADD,		TPOINT|TINT|TUNSIGNED,
+	SREG|SCON,	TPOINT|TINT|TUNSIGNED,
+		0,	RLEFT|RRIGHT,
+		"\tmov\tAR,ALD:\t/ assign 4:\n",
+
+ASSIGN,	FOREFF,
+	EADD,	TLONG|TULONG,
+	EADD,	TLONG|TULONG,
+		NABREG,	RLEFT|RRIGHT,
+		"\tmov\tAR,A1\n\tmov\tA1,AL\n\tmov\tUR,A1\n\tmov\tA1,ULD:\t/ assign 5:\n",
+
+ASSIGN,	FOREFF|INTAREG,
+	EADD,		TLONG|TULONG,
+	SREG|SCON,	TLONG|TULONG,
+		0,	RLEFT|RRIGHT,
+		"\tmov\tAR,AL\n\tmov\tUR,ULD:\t/ assign 6:\n",
+
+ASSIGN,	FOREFF|INTAREG,
+	EADD,		TCHAR|TUCHAR,
+	SAREG|SCON,	TPOINT|TINT|TUNSIGNED|TCHAR|TUCHAR,
+		0,	RLEFT|RRIGHT,
+		"T\tmovb\tZRL,ALD:\t/ assign 7:\n",
+
+ASSIGN,	FOREFF|INTAREG,
+	EADD,	TFLOAT,
+	EADD,	TFLOAT,
+		NABREG,	RLEFT|RRIGHT,
+		"\tmov\tAR,A1\n\tmov\tA1,AL\n\tmov\tUR,A1\n\tmov\tA1,ULD:\t/ assign 8:\n",
+
+ASSIGN,	FOREFF,
+	EADD,	TFLOAT|TDOUBLE,
+	STAREG,	TDOUBLE,
+		0,	RNULL,
+		"ZRD\tfstpZLK\tAL\n\tfwaitD:\t/ assign 9:\n",
+
+ASSIGN,	INTAREG,
+	EADD,	TFLOAT|TDOUBLE,
+	STAREG,	TDOUBLE,
+		0,	RRIGHT,
+		"\tfstZLK\tALD:\t/ assign 10:\n",
+
+ASSIGN,	FOREFF|INTAREG|INTBREG,
+	EADD,	TINT|TLONG,
+	STAREG,	TDOUBLE,
+		NTEMP,	RLEFT,
+		"ZRDZTD:\t/ assign 11:\n",
+
+# ifdef FORT
+ASSIGN,	FOREFF,
+	SLARGE|EADD,	TLONG,
+	SCON,		TPOINT,
+		NABREG,	RLEFT,
+		"\tmov\tAR,AL\n\tmov\tZRQ,ULD:\t/ assign 12:\n",
+# endif
+
+ASSIGN,	FOREFF|INTAREG,
+	SFLD,	TANY,
+	SZERO,	TANY,
+		0,	RRIGHT,
+		"\tand\tN,ALD:\t/ fld 1:\n",
+
+ASSIGN,	FOREFF|INTAREG,
+	SFLD,	TANY,
+	SCON,	TANY,
+		0,	RRIGHT,
+		"\tand\tN,AL\n\tor\tZRF,ALD:\t/ fld 2:\n",
+
+ASSIGN,	FOREFF,
+	SFLD,	TANY,
+	STAREG,	TANY,
+		0,	RRIGHT,
+		"ZRF\tand\tN,AL\n\tor\tAR,ALD:\t/ fld 3:\n",
+
+ASSIGN,	INTAREG,
+	SFLD,	TANY,
+	STAREG,	TANY,
+		NABREG,	RRIGHT,
+		"ZRF\tand\tN,AL\n\tor\tA1,ALD:\t/ fld 4:\n",
+
+EM(ASSIGN),
+
+OPLTYPE,	INTAREG,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		NAREG,	RESC1,
+		"ZXD:\t/ opltype 1:\n",
+
+OPLTYPE,	INTBREG,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		NBREG|NBSL,	RESC1,
+		"ZXD:\t/ opltype 2:\n",
+
+OPLTYPE,	FORARG,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		0,	RNULL,
+		"\tpush\tZQ\n\tpush\tALD:\t/ opltype 3:\n",
+
+OPLTYPE,	FOREFF,
+	SREG|AWD,	TANY,
+	SANY,		TANY,
+		0,	RRIGHT,
+		"D:\t/ opltype 4\n:",
+
+OPLTYPE,	INTAREG,
+	SZERO,	TPOINT|TINT|TUNSIGNED|TCHAR|TUCHAR,
+	SANY,	TANY,
+		NAREG,	RESC1,
+		"\txor\tA1,A1D:\t/ opltype 5:\n",
+
+OPLTYPE,	INTBREG,
+	SZERO,	TPOINT|TINT|TUNSIGNED|TCHAR|TUCHAR,
+	SANY,	TANY,
+		NBREG,	RESC1,
+		"\txor\tA1,A1D:\t/ opltype 6:\n",
+
+OPLTYPE,	INTAREG,
+	SZERO,	TLONG|TULONG,
+	SANY,	TANY,
+		NABREG,	RESC1,
+		"\txor\tA1,A1\n\txor\tU1,U1D:\t/ opltype 7:\n",
+
+OPLTYPE,	INTAREG,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		NAREG,	RESC1,
+		"\tmov\tAL,A1D:\t/ opltype 8:\n",
+
+OPLTYPE,	INTBREG,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		NBREG|NBSL,	RESC1,
+		"\tmov\tAL,A1D:\t/ opltype 9:\n",
+
+OPLTYPE,	FORARG,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		0,	RNULL,
+		"\tpush\tALD:\t/ opltype 10:\n",
+
+OPLTYPE,	FORCC,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		0,	RESCC,
+		"\ttest\tALD:\t/ opltype 11:\n",
+
+OPLTYPE,	INTAREG,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		NABREG,	RESC1,
+		"\tmov\tAL,A1\n\tmov\tUL,U1D:\t/ opltype 12:\n",
+
+OPLTYPE,	FORARG,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		0,	RNULL,
+		"\tpush\tUL\n\tpush\tALD:\t/ opltype 13:\n",
+
+OPLTYPE,	FORCC,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		0,	RESCC,
+		"ZAD:\t/ opltype 14\n:",
+
+OPLTYPE,	INTAREG,
+	SANY,	TCHAR|TUCHAR,
+	SANY,	TANY,
+		NAREG,	RESC1,
+		"T\tmovb\tAL,Z1LD:\t/ opltype 15:\n",
+
+OPLTYPE,	FORCC,
+	SANY,	TCHAR|TUCHAR,
+	SANY,	TANY,
+		0,	RESCC,
+		"\ttestb\tZLLD:\t/ opltype 16:\n",
+
+OPLTYPE,	INTAREG,
+	INTEMP,	TDOUBLE,
+	SANY,	TANY,
+		0,	RLEFT,
+		"\tfldt\tALZBD:\t/ opltype 17:\n",
+
+OPLTYPE,	INTAREG,
+	EADD,	TFLOAT|TDOUBLE,
+	SANY,	TANY,
+		0,	RLEFT,
+		"\tfldZLK\tALZBD:\t/ opltype 18:\n",
+
+EM(OPLTYPE),
+
+OPLOG,	FORCC,
+	SREG,		TPOINT|TINT|TUNSIGNED,
+	SREG|EADD,	TPOINT|TINT|TUNSIGNED,
+		0,	RESCC,
+		"\tcmp\tAR,AL\nZPD:\t/ oplog 1\n:",
+
+OPLOG,	FORCC,
+	SREG|EADD,	TPOINT|TINT|TUNSIGNED,
+	SCON,		TPOINT|TINT|TUNSIGNED,
+		0,	RESCC,
+		"\tcmp\tAR,AL\nZPD:\t/ oplog 2\n:",
+
+OPLOG,	FORCC,
+	SREG,		TLONG|TULONG,
+	SREG|EADD,	TLONG|TULONG,
+		0,	RESCC,
+		"ZCZPD:\t/ oplog 3\n:",
+
+OPLOG,	FORCC,
+	SREG|EADD,	TLONG|TULONG,
+	SCON,		TLONG|TULONG,
+		0,	RESCC,
+		"ZCZPD:\t/ oplog 4\n:",
+
+OPLOG,	FORCC,
+	SREG,		TCHAR|TUCHAR,
+	SREG|EADD,	TCHAR|TUCHAR,
+		0,	RESCC,
+		"\tcmpb\tZRL,ZLL\nZPD:\t/ oplog 5\n:",
+
+OPLOG,	FORCC,
+	SREG|EADD,	TCHAR|TUCHAR,
+	SCON,		TPOINT|TINT|TUNSIGNED|TCHAR|TUCHAR,
+		0,	RESCC,
+		"\tcmpb\tAR,ZLL\nZPD:\t/ oplog 6\n:",
+
+OPLOG,	FORCC,
+	STAREG,	TDOUBLE,
+	EADD,	TFLOAT|TDOUBLE,
+		NAREG,	RESCC,
+		"R10ZLD\tfcompZRK\tAR\n\tfstsw\tA1\n\tsahf\nZPD:\t/ oplog 7\n:",
+
+OPLOG,	FORCC,
+	STAREG,	TDOUBLE,
+	EADD,	TINT|TLONG,
+		NAREG,	RESCC,
+		"R10ZLD\tficompZRK\tAR\n\tfstsw\tA1\n\tsahf\nZPD:\t/ oplog 8\n:",
+
+OPLOG,	FORCC,
+	STAREG,	TDOUBLE,
+	STAREG,	TDOUBLE,
+		NAREG,	RESCC,
+		"R10ZLDZRD\tfcompp\n\tfstsw\tA1\n\tsahf\nZPD:\t/ oplog 9\n:",
+
+OPLOG,	FORCC,
+	SANY,	TANY,
+	SANY,	TANY,
+		REWRITE,	BITYPE,
+		"D:\t/ oplog 10\n:",
+
+EM(OPLOG),
+
+REG,	INTAREG,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		NAREG,	RESC1,
+		"ZX\tmov\tAL,A1D:\t/ reg 1:\n",
+
+REG,	INTBREG,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		NBREG,	RESC1,
+		"ZX\tmov\tAL,A1D:\t/ reg 2:\n",
+
+REG,	FORARG,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		0,	RNULL,
+		"\tpush\tZQ\n\tpush\tALD:\t/ reg 3:\n",
+
+REG,	INTEMP,
+	SLARGE|SANY,	TPOINT,
+	SANY,		TANY,
+		NAREG|2*NTEMP,	RESC2,
+		"\tmov\tAL,A2\nZY\tmov\tZQ,U2D:\t/ reg 4:\n",
+
+REG,	INTAREG,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		NAREG,	RESC1,
+		"\tmov\tAL,A1D:\t/ reg 5:\n",
+
+REG,	INTBREG,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		NBREG,	RESC1,
+		"\tmov\tAL,A1D:\t/ reg 6:\n",
+
+REG,	FORARG,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		0,	RNULL,
+		"\tpush\tALD:\t/ reg 7:\n",
+
+REG,	FORCC,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		0,	RESCC,
+		"\ttest\tALD:\t/ reg 8:\n",
+
+REG,	INTEMP,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TANY,
+		NTEMP,	RESC1,
+		"\tmov\tAL,A1D:\t/ reg 9:\n",
+
+REG,	INTAREG,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		NAREG|NASL,	RESC1,
+		"\tmov\tUL,U1\n\tmov\tAL,A1D:\t/ reg 10:\n",
+
+REG,	INTBREG,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		NBREG|NBSL,	RESC1,
+		"\tmov\tUL,U1\n\tmov\tAL,A1D:\t/ reg 11:\n",
+
+REG,	FORARG,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		0,	RNULL,
+		"\tpush\tUL\n\tpush\tALD:\t/ reg 12:\n",
+
+REG,	FORCC,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		0,	RESCC,
+		"ZAD:\t/ reg 13\n:",
+
+REG,	INTEMP,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		2*NTEMP,	RESC1,
+		"\tmov\tAL,A1\n\tmov\tUL,U1D:\t/ reg 14:\n",
+
+REG,	FORCC,
+	SANY,	TCHAR|TUCHAR,
+	SANY,	TANY,
+		0,	RESCC,
+		"\ttestb\tZLLD:\t/ reg 15:\n",
+
+REG,	INTEMP,
+	STAREG,	TCHAR|TUCHAR,
+	SANY,	TANY,
+		NTEMP,	RESC1,
+		"\tmovb\tZLL,A1D:\t/ reg 16:\n",
+
+REG,	FOREFF,
+	STAREG,	TDOUBLE,
+	SANY,	TANY,
+		0,	RNULL,
+		"ZLD\tffree\t%st(0)\n\tfincstpD:\t/ reg 17:\n",
+
+REG,	FORARG,
+	STAREG,	TDOUBLE,
+	SANY,	TANY,
+		NBREG,	RNULL,
+		"ZD\tsub\t$8,%sp\n\tmov\t%sp,A1\n\tfstpl\tZ1O\n\tfwaitD:\t/ reg 18:\n",
+
+REG,	FORCC,
+	STAREG,	TDOUBLE,
+	SANY,	TANY,
+		NAREG,	RESCC,
+		"R10ZD\tftst\n\tfstsw\tA1\n\tffree\t%st(0)\n\tfincstp\n\tsahfD:\t/ reg 19:\n",
+
+REG,	INTEMP,
+	STAREG,	TDOUBLE,
+	SANY,	TANY,
+		5*NTEMP,	RESC1,
+		"ZD\tfstpt\tA1\n\tfwaitD:\t/ reg 20:\n",
+
+EM(REG),
+
+CCODES,	INTAREG|INTBREG,
+	SANY,	TPOINT|TINT|TUNSIGNED|TCHAR|TUCHAR,
+	SANY,	TANY,
+		NABREG,	RESC1,
+		"\tmov\t$1,A1\nZND:\t/ ccodes 1\n:",
+
+CCODES,	INTAREG,
+	SANY,	TLONG|TULONG,
+	SANY,	TANY,
+		NABREG,	RESC1,
+		"\txor\tU1,U1\n\tmov\t$1,A1\nZND:\t/ ccodes 2\n:",
+
+EM(CCODES),
+
+UNARY MINUS,	INTAREG|INTBREG|FORCC,
+	STAREG|STBREG,	TINT|TUNSIGNED,
+	SANY,		TANY,
+		0,	RLEFT|RESCC,
+		"\tneg\tALD:\t/ u minus 1:\n",
+
+UNARY MINUS,	INTAREG,
+	STAREG,	TLONG|TULONG,
+	SANY,	TANY,
+		0,	RLEFT|RESCC,
+		"\tneg\tUL\n\tneg\tAL\n\tsbb\t$0,ULD:\t/ u minus 2:\n",
+
+UNARY MINUS,	INTAREG,
+	STAREG,	TDOUBLE,
+	SANY,	TANY,
+		0,	RLEFT,
+		"\tfchsD:\t/ u minus 3:\n",
+
+EM(UNARY MINUS),
+
+UNARY AND,	INTAREG,
+	SOREG,	TANY,
+	SANY,	TANY,
+		NAREG,	RESC1,
+		"ZX\tlea\tAL,A1D:\t/ unary and 1:\n",
+
+UNARY AND,	INTBREG,
+	SOREG,	TANY,
+	SANY,	TANY,
+		NBREG|NBSL,	RESC1,
+		"ZX\tlea\tAL,A1D:\t/ unary and 2:\n",
+
+EM(UNARY AND),
+
+COMPL,	INTAREG|INTBREG,
+	STAREG|STBREG,	TINT|TUNSIGNED,
+	SANY,	TANY,
+		0,	RLEFT,
+		"\tnot\tALD:\t/ compl 1:\n",
+
+COMPL,	INTAREG|INTBREG,
+	STAREG|STBREG,	TLONG|TULONG,
+	SANY,		TANY,
+		0,	RLEFT,
+		"\tnot\tAL\n\tnot\tULD:\t/ compl 2:\n",
+
+EM(COMPL),
+
+MUL,	INTAREG,
+	EADD,	TINT,
+	SCON,	TINT|TUNSIGNED,
+		NAREG,	RESC1,
+		"\timul\tAR,AL,A1D:\t/ mul 1:\n",
+
+MUL,	INTBREG,
+	EADD,	TINT,
+	SCON,	TINT|TUNSIGNED,
+		NBREG|NBSL,	RESC1,
+		"\timul\tAR,AL,A1D:\t/ mul 2:\n",
+
+EM(MUL),
+
+AND,	FORCC,
+	SREG|EADD,	TPOINT|TINT|TUNSIGNED,
+	SREG|SCON,	TPOINT|TINT|TUNSIGNED,
+		0,	RESCC,
+		"\ttest\tAR,ALD:\t/ and 1:\n",
+
+AND,	FORCC,
+	SREG|EADD,	TCHAR|TUCHAR,
+	SREG|SCON,	TINT,
+		0,	RESCC,
+		"\ttestb\tZRL,ZLLD:\t/ and 2:\n",
+
+EM(AND),
+
+ASG OPFLOAT,	INTAREG,
+	STAREG,	TDOUBLE,
+	EADD,	TFLOAT|TDOUBLE,
+		0,	RLEFT,
+		"\tfOFZRK\tARD:\t/ opfloat 1:\n",
+
+ASG OPFLOAT,	INTAREG,
+	STAREG,	TDOUBLE,
+	EADD,	TINT|TLONG,
+		0,	RLEFT,
+		"\tfiOFZRK\tARD:\t/ opfloat 2:\n",
+
+ASG OPFLOAT,	INTAREG,
+	STAREG,	TDOUBLE,
+	STAREG,	TDOUBLE,
+		0,	RRIGHT,
+		"ZLE\tfOFp\tAR,ALD:\t/ asg opfloat 3:\n",
+
+ASG MUL,	INTAREG,
+	SREG,	TINT,
+	SCON,	TINT|TUNSIGNED,
+		0,	RLEFT,
+		"\timul\tAR,ALD:\t/ asg mul 1:\n",
+
+ASG MUL,	INTAREG,
+	STAREG,		TINT|TUNSIGNED,
+	SREG|EADD,	TINT|TUNSIGNED,
+		0,	RLEFT,
+		"\tZImul\tAR,ALD:\t/ asg mul 2:\n",
+
+EM(ASG MUL),
+
+ASG OPDIV,	INTAREG,
+	STAREG,		TINT|TUNSIGNED|TLONG|TULONG,
+	SREG|EADD,	TINT|TUNSIGNED,
+		0,	RESC1,
+		"\tZIOI\tAR,ALD:\t/ asg opdiv 1:\n",
+
+EM(ASG OPDIV),
+
+ASG PLUS,	FOREFF|INTAREG|INTBREG,
+	SLARGE|SREG,	TINT|TUNSIGNED,
+	EADD|SCON,	TPOINT,
+		0,	RLEFT,
+		"ZX\tadd\tAR,ALD:\t/ asg opsimp 1:\n",
+
+ASG PLUS,	FOREFF|INTAREG|INTBREG,
+	SLARGE|SREG,	TINT|TUNSIGNED,
+	SREG,		TPOINT,
+		0,	RLEFT,
+		"ZRX\tadd\tAR,ALD:\t/ asg opsimp 2:\n",
+
+ASG PLUS,	FOREFF|INTAREG|INTBREG|FORCC,
+	SREG|EADD,	TINT|TUNSIGNED|TPOINT,
+	SONE,		TINT,
+		0,	RLEFT|RESCC,
+		"\tinc\tALD:\t/ asg opsimp 3:\n",
+
+ASG PLUS,	FOREFF|INTAREG|INTBREG,
+	SREG|EADD,	TLONG|TULONG,
+	SONE,		TINT|TLONG|TULONG,
+		0,	RLEFT,
+		"\tadd\t$1,AL\n\tadc\t$0,ULD:\t/ asg opsimp 4:\n",
+
+ASG PLUS,	FOREFF|INTAREG|FORCC,
+	SAREG|EADD,	TCHAR|TUCHAR,
+	SONE,		TINT,
+		0,	RLEFT|RESCC,
+		"\tincb\tZLLD:\t/ asg opsimp 5:\n",
+
+ASG PLUS,	FOREFF|INTAREG|INTBREG,
+	SREG|EADD,	TLONG|TULONG,
+	SREG|SCON,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tadd\tAR,AL\n\tadc\tUR,ULD:\t/ asg opsimp 6:\n",
+
+ASG PLUS,	FOREFF|INTAREG|INTBREG,
+	SREG,	TLONG|TULONG,
+	EADD,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tadd\tAR,AL\n\tadc\tUR,ULD:\t/ asg opsimp 7:\n",
+
+ASG MINUS,	FOREFF|INTAREG|INTBREG|FORCC,
+	SREG|EADD,	TINT|TUNSIGNED|TPOINT,
+	SONE,		TINT,
+		0,	RLEFT|RESCC,
+		"\tdec\tALD:\t/ asg opsimp 8:\n",
+
+ASG MINUS,	FOREFF|INTAREG|INTBREG,
+	SREG|EADD,	TLONG|TULONG,
+	SONE,		TINT|TLONG|TULONG,
+		0,	RLEFT,
+		"\tsub\t$1,AL\n\tsbb\t$0,ULD:\t/ asg opsimp 9:\n",
+
+ASG MINUS,	FOREFF|INTAREG|FORCC,
+	SAREG|EADD,	TCHAR|TUCHAR,
+	SONE,		TINT,
+		0,	RLEFT|RESCC,
+		"\tdecb\tZLLD:\t/ asg opsimp 10:\n",
+
+ASG MINUS,	FOREFF|INTAREG|INTBREG,
+	SREG|EADD,	TLONG|TULONG,
+	SREG|SCON,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tsub\tAR,AL\n\tsbb\tUR,ULD:\t/ asg opsimp 11:\n",
+
+ASG MINUS,	FOREFF|INTAREG|INTBREG,
+	SREG,	TLONG|TULONG,
+	EADD,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tsub\tAR,AL\n\tsbb\tUR,ULD:\t/ asg opsimp 12:\n",
+
+ASG OPSIMP,	FOREFF|INTAREG|INTBREG|FORCC,
+	SREG|EADD,	TPOINT|TINT|TUNSIGNED,
+	SREG|SCON,	TPOINT|TINT|TUNSIGNED,
+		0,	RLEFT|RESCC,
+		"\tOI\tAR,ALD:\t/ asg opsimp 13:\n",
+
+ASG OPSIMP,	FOREFF|INTAREG|INTBREG|FORCC,
+	SREG,	TPOINT|TINT|TUNSIGNED,
+	EADD,	TPOINT|TINT|TUNSIGNED,
+		0,	RLEFT|RESCC,
+		"\tOI\tAR,ALD:\t/ asg opsimp 14:\n",
+
+ASG OPSIMP,	FOREFF|INTAREG|INTBREG,
+	SREG|EADD,	TLONG|TULONG,
+	SREG|SCON,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tOL\tAR,AL\n\tOL\tUR,ULD:\t/ asg opsimp 15:\n",
+
+ASG OPSIMP,	FOREFF|INTAREG|INTBREG,
+	SREG,	TLONG|TULONG,
+	EADD,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tOL\tAR,AL\n\tOL\tUR,ULD:\t/ asg opsimp 16:\n",
+
+ASG OPSIMP,	FOREFF|INTAREG|INTBREG|FORCC,
+	SREG|EADD,	TCHAR|TUCHAR,
+	SREG|SCON,	TCHAR|TUCHAR|TPOINT|TINT|TUNSIGNED,
+		0,	RLEFT|RESCC,
+		"T\tOIb\tZRL,ZLLD:\t/ asg opsimp 17:\n",
+
+EM(ASG OPSIMP),
+
+ASG OPSHFT,	INTAREG|INTBREG,
+	SREG|EADD,	TINT|TUNSIGNED|TLONG|TULONG,
+	SCON,		TINT|TUNSIGNED,
+		0,	RLEFT,
+		"ZGD:\t/ asg opshft 1\n:",
+
+ASG OPSHFT,	INTAREG|INTBREG,
+	SREG|EADD,	TINT|TUNSIGNED|TLONG|TULONG,
+	SREG,		TINT|TUNSIGNED|TCHAR|TUCHAR,
+		0,	RLEFT,
+		"RR4ZGD:\t/ asg opshft 2\n:",
+
+EM(ASG OPSHFT),
+
+UNARY CALL,	INTAREG,
+	SCON,	TANY,
+	SANY,	TANY,
+		NAREG|NASL,	RESC1,
+		"T\tZJcall\tCLD:\t/ u call 1:\n",
+
+UNARY CALL,	INTAREG,
+	SOREG|SNAME,	TANY,
+	SANY,		TANY,
+		NAREG|NASL,	RESC1,
+		"T\tZJcall\t*ALD:\t/ u call 2:\n",
+
+EM(UNARY CALL),
+
+FORCE,	FOREFF,
+	SLARGE|STAREG|STBREG,	TPOINT,
+	SANY,			TANY,
+		NAREG,	RLEFT,
+		"ZXD:\t/ force 1\n:",
+
+FORCE,	FOREFF,
+	STAREG,	TDOUBLE,
+	SANY,	TANY,
+		0,	RLEFT,
+		"ZLD\tfwaitD:\t/ force 2:\n",
+
+FORCE,	FOREFF,
+	STAREG|STBREG,	TANY,
+	SANY,		TANY,
+		0,	RLEFT,
+		"D:\t/ force 3\n:",
+
+EM(FORCE),
+
+SCONV,	INTAREG|INTBREG,
+	SLARGE|SREG|AWD,	TLONG|TULONG,
+	SANY,			TPOINT,
+		0,	RLEFT,
+		"ZXD:\t/ sconv 1\n:",
+
+SCONV,	INTAREG,
+	SLARGE|SREG,	TPOINT,
+	SANY,		TLONG|TULONG,
+		NAREG|NASL,	RESC1,
+		"ZYD:\t/ sconv 2\n:",
+
+SCONV,	INTBREG,
+	SLARGE|SREG,	TPOINT,
+	SANY,		TLONG|TULONG,
+		NBREG|NBSL,	RESC1,
+		"ZYD:\t/ sconv 3\n:",
+
+SCONV,	INTAREG|INTBREG,
+	SLARGE|AWD,	TPOINT,
+	SANY,		TLONG|TULONG,
+		0,	RLEFT,
+		"ZYD:\t/ sconv 4\n:",
+
+SCONV,	INTAREG|INTBREG,
+	SLARGE|SREG,	TPOINT,
+	SANY,		TINT|TUNSIGNED,
+		0,	RLEFT,
+		"ZYD:\t/ sconv 5\n:",
+
+SCONV,	INTAREG|INTBREG,
+	SREG,	TPOINT|TINT|TUNSIGNED,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+		0,	RLEFT,
+		"D:\t/ sconv 6\n:",
+
+SCONV,	INTAREG|INTBREG,
+	EADD,	TINT|TUNSIGNED,
+	SANY,	TINT|TUNSIGNED,
+		0,	RLEFT,
+		"D:\t/ sconv 7\n:",
+
+SCONV,	INTAREG,
+	STAREG,	TINT,
+	SANY,	TLONG|TULONG,
+		0,	RLEFT,
+		"\tcwdD:\t/ sconv 8:\n",
+
+SCONV,	INTAREG|INTBREG,
+	SREG|EADD,	TPOINT|TUNSIGNED,
+	SANY,		TLONG|TULONG,
+		NABREG|NABSL,	RESC1,
+		"ZLV\txor\tU1,U1D:\t/ sconv 9:\n",
+
+SCONV,	INTAREG|INTBREG,
+	SREG|EADD,	TLONG|TULONG,
+	SANY,		TLONG|TULONG|TPOINT|TINT|TUNSIGNED|TCHAR|TUCHAR,
+		0,	RLEFT,
+		"TD:\t/ sconv 10\n:",
+
+SCONV,	INTAREG,
+	STAREG,	TCHAR,
+	SANY,	TINT|TUNSIGNED,
+		0,	RLEFT,
+		"\tcbwD:\t/ sconv 11:\n",
+
+SCONV,	INTAREG,
+	SAREG,	TUCHAR,
+	SANY,	TINT|TUNSIGNED,
+		0,	RLEFT,
+		"\txorb\tZLH,ZLHD:\t/ sconv 12:\n",
+
+SCONV,	INTAREG,
+	STAREG|EADD,	TINT|TUNSIGNED,
+	SANY,		TCHAR|TUCHAR,
+		0,	RLEFT,
+		"TD:\t/ sconv 13\n:",
+
+SCONV,	INTAREG,
+	SREG,	TINT,
+	SANY,	TFLOAT|TDOUBLE,
+		NTEMP,	RLEFT,
+		"\tmov\tAL,A1\n\tfild\tA1ZLBD:\t/ sconv 14:\n",
+
+SCONV,	INTAREG,
+	SREG,	TPOINT|TUNSIGNED,
+	SANY,	TFLOAT|TDOUBLE,
+		2*NTEMP,	RLEFT,
+		"ZTZLBD:\t/ sconv 15:\n",
+
+SCONV,	INTAREG,
+	SREG,	TLONG,
+	SANY,	TFLOAT|TDOUBLE,
+		2*NTEMP,	RLEFT,
+		"\tmov\tAL,A1\n\tmov\tUL,U1\n\tfildl\tA1ZLBD:\t/ sconv 16:\n",
+
+SCONV,	INTAREG,
+	SREG,	TULONG,
+	SANY,	TFLOAT|TDOUBLE,
+		4*NTEMP,	RLEFT,
+		"ZTZLBD:\t/ sconv 17:\n",
+
+SCONV,	INTAREG,
+	EADD,	TINT|TLONG,
+	SANY,	TFLOAT|TDOUBLE,
+		0,	RLEFT,
+		"\tfildZLK\tALZLBD:\t/ sconv 18:\n",
+
+SCONV,	INTAREG,
+	EADD,	TFLOAT,
+	SANY,	TDOUBLE,
+		0,	RLEFT,
+		"\tflds\tALZLBD:\t/ sconv 19:\n",
+
+SCONV,	INTAREG,
+	STAREG,	TDOUBLE,
+	SANY,	TDOUBLE,
+		0,	RLEFT,
+		"D:\t/ sconv 20\n:",
+
+SCONV,	INTEMP,
+	STAREG,	TDOUBLE,
+	SANY,	TFLOAT,
+		2*NTEMP,	RESC1,
+		"ZLD\tfstps\tA1\n\tfwaitD:\t/ sconv 21:\n",
+
+SCONV,	INTEMP,
+	STAREG,	TDOUBLE,
+	SANY,	TINT,
+		2*NTEMP,	RESC1,
+		"ZLDZTD:\t/ sconv 22:\n",
+
+SCONV,	INTEMP,
+	STAREG,	TDOUBLE,
+	SANY,	TPOINT|TUNSIGNED|TLONG,
+		3*NTEMP,	RESC1,
+		"ZLDZTD:\t/ sconv 23:\n",
+
+SCONV,	INTEMP,
+	STAREG,	TDOUBLE,
+	SANY,	TULONG,
+		5*NTEMP,	RESC1,
+		"ZLDZTD:\t/ sconv 25:\n",
+
+EM(SCONV),
+
+STARG,	FORARG,
+	SBREG,	TANY,
+	SANY,	TANY,
+		NAREG|NBREG,	RNULL,
+		"R14R25ZSD:\t/ starg 1:\n",
+
+EM(STARG),
+
+STASG,	INTBREG|FOREFF,
+	SBREG,	TANY,
+	SBREG,	TANY,
+		NAREG,	RRIGHT,
+		"R14ZSD:\t/ stasg 1:\n",
+
+EM(STASG),
+
+INIT,	FOREFF,
+	SCON,		TANY,
+	SLARGE|SANY,	TPOINT,
+		0,	RNULL,
+		"\t.value\tCL; .value ZQD:\t/ init 1:\n",
+
+INIT,	FOREFF,
+	SCON,	TANY,
+	SANY,	TPOINT|TINT|TUNSIGNED,
+		0,	RNOP,
+		"\t.value\tCLD:\t/ init 2:\n",
+
+INIT,	FOREFF,
+	SCON,	TANY,
+	SANY,	TLONG|TULONG,
+		0,	RNOP,
+		"\t.long\tCLD:\t/ init 3:\n",
+
+INIT,	FOREFF,
+	SCON,	TANY,
+	SANY,	TCHAR|TUCHAR,
+		0,	RNOP,
+		"\t.byte\tCLD:\t/ init 4:\n",
+
+EM(INIT),
+
+# ifdef FORT
+GOTO,	FOREFF,
+	EADD,	TANY,
+	SANY,	TANY,
+		0,	RNOP,
+		"\tZJjmp\t*ALD:\t/ goto 1:\n",
+
+EM(GOTO),
+# endif
+
+	/* Default actions for hard trees ... */
+
+# define DF(x) FORREW,SANY,TANY,SANY,TANY,REWRITE,x,0
+
+UNARY MUL,	DF(UNARY MUL),
+
+UNARY AND,	DF(UNARY AND),
+
+STARG,		DF(STASG),
+
+INCR,		DF(INCR),
+
+DECR,		DF(INCR),
+
+ASSIGN,		DF(ASSIGN),
+
+STASG,		DF(STASG),
+
+OPLEAF,		DF(NAME),
+
+OPLOG,		DF(NOT),
+
+COMOP,		DF(COMOP),
+
+INIT,		DF(INIT),
+
+# ifdef FORT
+GOTO,		DF(ASSIGN),
+# endif
+
+OPUNARY,	DF(UNARY MINUS),
+
+ASG OPANY,	DF(ASG PLUS),
+
+OPANY,		DF(BITYPE),
+
+FREE,	FREE,	FREE,	FREE,	FREE,	FREE,	FREE,	FREE,	"help; I'm in trouble\n" };

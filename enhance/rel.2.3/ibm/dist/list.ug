@@ -1,0 +1,16 @@
+./etc/Boot.hd
+./etc/boot.hd
+./etc/divvy
+./etc/fdisk
+./etc/format
+./etc/getty
+./etc/init
+./etc/labelit
+./etc/patch
+./etc/setup
+./etc/telinit
+./etc/ttypatch
+./etc/release/motd
+./etc/release/releasenotes
+./system5
+./unix

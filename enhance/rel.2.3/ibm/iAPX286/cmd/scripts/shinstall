@@ -1,0 +1,24 @@
+: /bin/sh
+# shinstall: install a shell command file
+ROOT=../../../dist
+if [ -d $ROOT/"$1" ]
+then
+    DIR=$1
+    shift
+else
+    echo "$1:" not a directory
+    exit 1
+fi
+for i
+do
+    if [ -f $i.sh ]
+    then
+	cp $1.sh  $ROOT/$DIR/$i
+	chmod 500 $ROOT/$DIR/$i 
+	chown bin $ROOT/$DIR/$i 
+	chgrp bin $ROOT/$DIR/$i 
+	ls -ls    $ROOT/$DIR/$i
+    else
+	echo $1: not found
+    fi
+done

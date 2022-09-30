@@ -1,0 +1,40 @@
+/*	Copyright (c) 1984 AT&T	*/
+/*	  All Rights Reserved  	*/
+
+/*	THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T	*/
+/*	The copyright notice above does not evidence any   	*/
+/*	actual or intended publication of such source code.	*/
+
+/*	@(#)	1.1	*/
+OP("addb",NORMALI,IM+SBYTE+NOSE),
+OP("orb",NORMALI,IM+SBYTE+NOSE),
+OP("adcb",NORMALI,IM+SBYTE+NOSE),
+OP("sbbb",NORMALI,IM+SBYTE+NOSE),
+OP("andb",NORMALI,IM+SBYTE+NOSE),
+OP("subb",NORMALI,IM+SBYTE+NOSE),
+OP("xorb",NORMALI,IM+SBYTE+NOSE),
+OP("cmpb",NORMALI,IM+SBYTE+NOSE),
+OP("add",NORMALI,IM+SWORD+NOSE),
+OP("or",NORMALI,IM+SWORD+NOSE),
+OP("adc",NORMALI,IM+SWORD+NOSE),
+OP("sbb",NORMALI,IM+SWORD+NOSE),
+OP("and",NORMALI,IM+SWORD+NOSE),
+OP("sub",NORMALI,IM+SWORD+NOSE),
+OP("xor",NORMALI,IM+SWORD+NOSE),
+OP("cmp",NORMALI,IM+SWORD+NOSE),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("",ILLEGAL,0),
+OP("add",NORMALI,IM+SWORD+SE),
+OP("",ILLEGAL,0),
+OP("adc",NORMALI,IM+SWORD+SE),
+OP("sbb",NORMALI,IM+SWORD+SE),
+OP("",ILLEGAL,0),
+OP("sub",NORMALI,IM+SWORD+SE),
+OP("",NORMALI,0),
+OP("cmp",NORMALI,IM+SWORD+SE),

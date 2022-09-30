@@ -1,0 +1,93 @@
+set -x
+format /dev/rdsk/0s24
+format -f 0 -l 0 /dev/rdsk/0s15
+mkfs /dev/dsk/0s25 680 7 9
+labelit /dev/dsk/0s25 mnt "boot#1"
+mount /dev/dsk/0s25 /mnt
+set +x
+cpio -pvduma /mnt <<!
+/dev
+/dev/error
+/dev/console
+/dev/syscon
+/dev/systty
+/dev/null
+/dev/tty
+/dev/ttyaux
+/dev/tty0
+/dev/tty1
+/dev/tty2
+/dev/tty3
+/dev/tty4
+/dev/tty5
+/dev/tty6
+/dev/tty7
+/dev/tty8
+/dev/tty9
+/dev/tty10
+/dev/tty11
+/dev/tty12
+/dev/lp
+/dev/kmem
+/dev/mem
+/dev/prf
+/dev/dsk
+/dev/dsk/0s15
+/dev/dsk/0s24
+/dev/dsk/0s25
+/dev/dsk/0s29
+/dev/rdsk
+/dev/rdsk/0s15
+/dev/rdsk/0s24
+/dev/rdsk/0s25
+/dev/rdsk/0s29
+/bin
+/bin/mkdir
+/bin/rsh
+/bin/sh
+/bin/su
+/bin/cpio
+/bin/sync
+/etc
+/etc/kmount
+/etc/kumount
+/etc/passwd
+/etc/init
+/bin/telinit
+/etc/boot
+/etc/ioctl.syscon
+/etc/mkfs
+/etc/format
+/etc/ib
+/etc/labelit
+/etc/uadmin
+/dev/dsk/0s1
+/dev/dsk/0s10
+/dev/dsk/0s11
+/dev/dsk/0s12
+/dev/dsk/0s13
+/dev/dsk/0s14
+/dev/rdsk/0s1
+/dev/rdsk/0s10
+/dev/rdsk/0s11
+/dev/rdsk/0s12
+/dev/rdsk/0s13
+/dev/rdsk/0s14
+/usr
+/lib
+/tmp
+/mnt
+!
+set -x
+mknod /mnt/dev/swap b 0 10
+chmod 440 /mnt/dev/swap
+cp /usr/src/uts/iAPX286/unix.fl /mnt/unix
+cp /etc/inittab.s /mnt/etc/inittab
+cp /usr/src/cmd/.adm/iAPX286/setup.1.40 /mnt/bin/setup
+cp /usr/src/cmd/.adm/iAPX286/setup.2.40 /mnt/bin/setup.2
+set +x
+ls -lR /mnt
+umount /dev/dsk/0s25
+ib /dev/rdsk/0s15 /dev/rdsk/0s24
+sync;sync
+fsck /dev/dsk/0s25

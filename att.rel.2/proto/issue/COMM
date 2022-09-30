@@ -1,0 +1,5 @@
+join -j1 1 -j2 9 -a1 -a2 -e "MISSING" -o 1.1 2.9 2.10 2.1 $1 BASE |\
+grep '[b,c,s,G]$' |\
+grep -v OLD |\
+grep -v /dev/ |\
+awk -f COMMawk1

@@ -1,0 +1,7 @@
+echo Transforming kernel file $1 into floppy-rooting kernel...\\\c
+patch $1 rootdev 0x1c6
+patch $1 pipedev 0x1c6
+patch $1 swapdev 0x1c6
+patch $1 nswap 140
+patch $1 -l swplo 2260
+echo done

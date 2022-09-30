@@ -1,0 +1,42 @@
+7/31/87		uport!dev286
+
+This directory contains information for the link kit for 
+Microport's System V/AT.  To make a kernel, cd into the linkkit/cf
+directory, and type "make wini"; the resulting kernel will be ../system5.
+
+For some technical info on basic driver utilities, etc., check
+the directory ./doc; specifically, check the file doc/useage.
+Some caveats:
+	1)	The serial driver in the current lib2 is set up for two
+		IBM serial ports known as /dev/tty0 (COM1:) and
+		/dev/tty1 (COM2:).
+
+	2)	You currently need the software development system in order
+		to make a kernel.
+
+	3)	This release includes some psuedo drivers to be used
+		as examples. They are under the examples directory.
+		These examples still need some more work and should
+		improved in a later release.
+		If you want to learn more about UNIX internals, 
+		get a copy of the book "The Design of the UNIX 
+		Operating System" by Maurice J. Bach" 
+		(Prentice-Hall, 1986). This book has just come out, 
+		and has a wealth of information in it.
+
+	4)	This version of the link kit uses config to generate the
+		necessary source files from the system configuration files
+		"dfile" and "master".
+
+	5)	The "linkkit/cf/Linkkit.mk" description file for the
+		make utility uses a loader description file called
+		"linkkit/cf/ifile".  This file may not always correctly
+		pass information to the loader.  For instance, if the
+		kernel requires more than 3 text segments because of adding
+		drivers to the  system,  the file "linkkit/cf/ifile.text4"
+		must be used in place of the file "linkkit/cf/ifile".
+		The "size" and "dump" utilities can be used to find out
+		information about the new kernel that your linkkit just
+		built.  The "size" utility will tell you how many text,
+		data, and bss sections there are in the kernel.
+

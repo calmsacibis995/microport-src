@@ -1,0 +1,89 @@
+#	@(#)	1.6
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Install iAPX286 UNIX user header files"
+
+wd=`pwd`
+sd=${SRC-$ROOT/usr/src}/head
+id=$ROOT/usr/include
+if [ ! -d $id ]
+then mkdir $id
+fi
+ls $id > usrlist
+trap "rm -f usrlist Headlist headlist;cd $wd;exit" 0 1 2 3 15
+if [ "$1" ]
+then
+	args=`echo $* | sed -e 's;sys\.[^ ]*;;g'`
+else
+	args=`ls $sd | sed -e 's;sys\.[^ ]*;;g'`
+	ls $sd > Headlist
+	echo "aouthdr.h\nar.h\nfilehdr.h\nldfcn.h\nlinenum.h\npatch.h\npaths.h\nreloc.h\nscnhdr.h\nsgs.h\nsgsmacros.h\nstorclass.h\nsyms.h\ntv.h" >> Headlist
+	sort Headlist > headlist
+	rem=`comm -23 usrlist headlist | tr -s "\012" " "`
+	echo "Removing:\n$rem"
+	(cd $id; rm -f $rem 2> /dev/null)
+fi
+index=0
+echo "Copying:"
+if vax || u3b
+then echo "sys.s \c"
+fi
+if vax
+then
+	cp $sd/sys.vax $id/sys.s
+	chown bin $id/sys.s
+	chgrp bin $id/sys.s
+elif pdp11
+then
+	cp $sd/sys.pdp $id/sys.s
+	chown bin $id/sys.s
+	chgrp bin $id/sys.s
+elif u3b5 || u3b2
+then
+	cp $sd/sys.u3b5 $id/sys.s
+	chmod 664 $id/sys.s
+	if [ "$ROOT" = "" ]
+	then
+		chgrp bin $id/sys.s
+		chown bin $id/sys.s
+	fi
+fi
+for i in $args
+do
+	if [ -d $i ]
+	then
+		if test $index -gt 6
+		then echo
+		     index=0
+		else index=`expr $index + 1`
+		fi
+		echo "(directory $i) \c"
+		cp $sd/$i/* $id/$i
+	else
+		echo "$i \c"
+		if test $index -gt 6
+		then echo
+		     index=0
+		else index=`expr $index + 1`
+		fi
+		cp $sd/$i $id
+		chmod 664 $id/$i
+		if [ "$ROOT" = "" ]
+		then
+			chgrp bin $id/$i 
+			chown bin $id/$i
+		fi
+	fi
+done
+echo

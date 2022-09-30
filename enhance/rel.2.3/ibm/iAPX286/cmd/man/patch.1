@@ -1,0 +1,33 @@
+PATCH(1)							PATCH(1)
+
+NAME
+	patch \- inspect or modify an STL- or COFF-format binary file
+
+SYNOPSIS
+	patch [-k] file [-lbisc] [+offset] symbol [datum] [datum]
+
+DESCRIPTION
+	Patch displays or modifies parts of an STL or COFF format .o 
+or a.out file.
+The -k option inspects or modifies /dev/kmem instead of the binary file,
+and when used with a kernel binary file (usually /system5)
+may be used to hot-patch running operating system.  When used with 
+no data arguments, patch simply prints out the contents of symbol or
+symbol+offset in the format given by one of -lbisc, which denote
+long, byte, integer, string, char.  Integer is the default data size.
+When used one or more data arguments,
+patch modifies successive locations starting from symbol or symbol+offset
+with the given data.  Long, integer, and byte data are numeric and 
+may be preceded with a 0 or 0x to denote octal or hexadecimal data.
+A numeric address may be used instead of symbol.
+Character data may be one character long or in backslash form:
+    \123 style strings are collapsed into a single character.
+	\000 denotes 0.
+	\t gets replaced by a tab
+	\n gets replaced by a newline
+	\r gets replaced by a carriage return
+	\b gets replaced by a backspace
+String data may be one or more characters, with the above escape sequences.
+A null is always patched after each string datum.
+
+

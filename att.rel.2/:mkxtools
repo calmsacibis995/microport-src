@@ -1,0 +1,72 @@
+#	@(#)	1.4
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 Cross-Tools"
+
+if [ x$ROOT != x ]
+then echo "This command does not execute in the cross-environment"
+exit 1
+fi
+
+here=`pwd`
+ROOT=`dirname $here`
+ROOT=`dirname $ROOT`
+
+if [ $# -eq 0 ]
+then
+args="xsgs config"
+else
+args="$@"
+fi
+
+for i in $args
+do
+	case $i in
+	xsgs)	echo ===== xsgs
+		echo "Make Cross-Sgs with standard defaults"
+		if [ ! -d $ROOT/i286/bin -o ! -d $ROOT/i286/lib ]
+		then echo $ROOT/bin or $ROOT/lib does not exist
+		     echo create these directories and re-execute
+		     exit 1
+		     fi
+		cd cmd/sgs/xenv/i286
+		sh pathedit <<-EOF
+			y
+			EOF
+		cd ../..
+		make -f xsgs.mk
+		cd $here
+		;;
+	config)	echo ===== config
+		cd cmd/config/iAPX286
+		cc -I $ROOT/usr/include -o i286config config.c
+# install in i286/bin if it exists, otherwise in ROOT/bin
+		if [ -d $ROOT/i286/bin ]
+		then mv i286config $ROOT/i286/bin
+		     echo i286config installed in $ROOT/i286/bin
+		elif [ ! -d $ROOT/bin ]
+		then mkdir $ROOT/bin
+		     mv i286config $ROOT/bin
+		     echo i286config installed in $ROOT/bin
+		else mv i286config $ROOT/bin
+		     echo i286config installed in $ROOT/bin
+		fi
+		cd $here
+		;;
+	*)	echo $i is not a valid arguement
+		echo ERROR
+		exit 1
+		;;
+	esac
+done

@@ -1,0 +1,96 @@
+#/*   @(#)README	1.2 - 85/07/09 */
+#
+#		MASTER README FOR iAPX SGS
+#
+#
+
+The source files composing the iAPX SGS are stored in a directory structure
+of the form:
+
+	$(SGSBASE)/<tool>/iapx		machine dependent source files for "tool"
+	$(SGSBASE)/<tool>/common	machine independent source files for "tool"
+	$(SGSBASE)/inc/iapx		machine dependent header files 
+	$(SGSBASE)/inc/common		machine independent header files 
+	$(SGSBASE)/doc/iapx		machine dependent document files
+	$(SGSBASE)/doc/common		machine independent document files
+
+where "tool" is the particular tool, e.g. "as." Tools are built in the iapx 
+directories. $(SGSBASE) is the directory in which you read the release tape.
+
+The directory containing this README file also contains the following
+files:
+	pathedit -- shell script to set path names in paths.h, sgs.h,
+		    and makefile
+
+	paths.h.bs -- a reusable copy of $(SGSBASE)/inc/iapx/paths.h
+
+	sgs.h.bs --	"		$(SGSBASE)/inc/iapx/sgs.h
+
+	makefile -- the master iAPX SGS makefile after pathedit has been run
+
+	makefile.bs --  a reusable copy of the master iAPX SGS makefile
+
+To build the tools, the paths.h file (in $(SGSBASE)/inc/iapx/paths.h)
+must be set up properly.  This file contains the absolute path
+names for various tools and directories.  These path names must
+be set using the pathedit shell program in this directory.
+Pathedit will also set the path names in the master makefile
+(./makefile), and the SGS prefix in sgs.h ($(SGSBASE)/inc/iapx/sgs.h).
+
+Let:
+	BINDIR = directory containing the tools which are called
+		 directly, such as iapxcc, iapxsize, etc.
+
+	LIBDIR = directory containing indirectly called passes of
+		 various tools, such as iapxas1, iapxld2, etc.
+
+	INCDIR = directory containing include files for user reference
+		 and special application tool building
+
+	MANDIR = directory containing manual pages for tools in BINDIR
+
+	NAME   = generic prefix used for names, e.g. "iapx"
+
+	ARCH   = the architecture of the host machine of the form ARnnW[R]
+		  where nn  = number of bits in a word,
+			[R] = indicates "reverse", i.e. DEC, byte ordering
+
+		  thus:
+			AR16WR = PDP 11/70, 11/45
+			AR32WR = VAX 11/780
+			AR32W  = 3B-20, IBM 370, MAC-80, etc.
+
+To set the pathnames, type:
+	pathedit BINDIR LIBDIR INCDIR MANDIR NAME ARCH 
+
+for example:
+  pathedit /usr/iapx/bin /usr/iapx/lib /usr/iapx/inc /usr/iapx/man iapx AR32WR
+
+If this is the first installation of iAPX, the iAPX "system directory" and
+the directories below it must be created. If the directory /usr/iapx
+is to be used, the system administrator (super-user) must create the directory.
+Otherwise, the "mkdir" command can be used. Next, the directories below the
+system directory must be created by issuing the command:
+
+	make first
+
+Now the tools can be made. Simply type the following:
+
+	make
+	make install
+
+This script makes the tools and installs them in the proper
+directories. The make install also creates the libraries that
+are loaded when using the iapxcc to cross-compile files.
+
+Some other make capabilities are:
+
+	make save	-saves the current sgs tools in "tool".back
+
+	make uninstall	-recovers the previous sgs from the backups
+			 made by "save"
+
+	make shrink	-removes the .o files from the iapx and common
+			 directory structures
+
+

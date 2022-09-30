@@ -1,0 +1,88 @@
+
+trap "" 2
+TZ=PST8PDT
+export TZ
+R=/etc/release; export R
+mv $R/bsetdate /etc/bsetdate
+mv $R/shutdown /etc/shutdown
+chmod 744 /etc/bsetdate /etc/shutdown
+
+/etc/bsetdate
+
+usr=2
+# if [ -r /dev/dsk/0s10 ]
+# then
+#	 usr=11
+# fi
+set -x
+cd /
+mklost+found
+cd /usr
+mklost+found
+cd /
+rm -f /bin/setup.2 /etc/kmount /etc/kumount /olddiskdata
+chmod 775 /
+chown bin /bin;  chgrp bin /bin;  chmod 775 /bin
+chown root /etc; chgrp sys /etc;  chmod 775 /etc
+chown root /dev; chgrp sys /dev;  chmod 755 /dev
+chown bin /lib;  chgrp bin /lib;  chmod 775 /lib
+chown root /mnt; chgrp root /mnt; chmod 777 /mnt
+chown sys /tmp;  chgrp sys /tmp;  chmod 777 /tmp
+chown bin /usr;  chgrp bin /usr;  chmod 775 /usr
+mv /etc/release/releasenotes /usr/news
+chown adm /usr/news/releasenotes
+chgrp adm /usr/news/releasenotes
+chmod 444 /usr/news/releasenotes
+if [ ! -f /usr/guest/.profile ]
+then
+    cp /.profile /usr/guest
+    chown guest /usr/guest/.profile
+    chgrp other /usr/guest/.profile
+    chmod 644 /usr/guest/.profile
+fi
+sync; sync; sync
+umount /dev/dsk/0s$usr
+chown bin /usr;  chgrp bin /usr;  chmod 775 /usr
+# if [ -r /dev/dsk/0s10 ]
+# then	
+#	umount /dev/dsk/0s14
+# fi
+# set +x
+# if [ ! -d /dev/sxt ]
+# then
+#	echo "making sxt nodes ( takes about 45 seconds )"
+#	cd /dev
+#	mkdir sxt
+#	chmod 755 sxt
+#	cd sxt
+#	umask 055
+#	device=0
+#	for i in 00 01 02 03 04 05 06 07
+#	do
+#		for j in 0 1 2 3 4 5 6 7
+#		do
+#			mknod $i$j c 6 $device
+#			ln $i$j ../sxt$i$j
+#			device=`expr $device + 1`
+#		done
+#	done
+# fi
+# cd /
+# mv /etc/release/.profile /
+mv /etc/release/motd /etc
+mv /etc/release/mountall /etc
+# chown root /.profile;  chgrp sys /.profile;  chmod 444 /.profile
+chown root /etc/motd;  chgrp sys /etc/motd;  chmod 644 /etc/motd
+chown root /etc/mountall;  chgrp sys /etc/mountall;  chmod 744 /etc/mountall
+rm -f  /usr/spool/lp/interface/lp
+/bin/rm -r /etc/release
+>/etc/install.date
+chmod 444 /etc/install.date
+set +x
+sync
+sync
+sync
+trap 2
+echo runtime set loaded, going multi-user. You may load any package by
+echo inserting the floppy and typing installit.
+telinit 2

@@ -1,0 +1,34 @@
+#/*   @(#)mac2defs	1.2 - 85/07/08 */
+
+extern int fregs;
+extern int maxargs;
+extern int fdepth;
+extern short revrel[];
+
+# define BYTEOFF(x)	((x)&01)
+# define BITOOR(x)	((x)>>3)	/* bit offset to oreg offset */
+
+# define REGSZ	14	/* size of register space */
+# define TMPREG BP
+# define LTHRESH 3
+
+# define STOARG(p)	/* just evaluate the arguments, and be done with it... */
+# define STOFARG(p)
+# define STOSTARG(p)
+# define genfcall(a,b)	gencall(a,b)
+
+# define ISFLCONV(x)	((INT <= (x)) && ((x) <= DOUBLE))
+
+# define SLSHFT	(SPECIAL|3)	/* long shifts that need temp reg */
+# define SLARGE	(SPECIAL|020000)
+
+# define MYREADER(p)	myreader(p)
+# define MYCANON(p)	mycanon(p)
+# define callchk()	mycallchk()
+# define USABLE	1	/* get rid of independent usable routine */
+# define NESTCALLS
+# define SSPLIT		/* enable segment splitting operator */
+
+# ifndef ONEPASS
+# undef EXIT
+# endif

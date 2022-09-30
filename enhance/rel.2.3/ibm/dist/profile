@@ -1,0 +1,6 @@
+stty erase  echoe
+TERM=ansi; export TERM
+echo ""
+echo "To continue installing Microport's System V/AT,"
+echo "insert the floppy labeled \`runtime.1\` and type \`installit\`"
+echo ""

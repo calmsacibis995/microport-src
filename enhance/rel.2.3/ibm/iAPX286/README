@@ -1,0 +1,102 @@
+	This directory and its subdirectories contain the source to make
+	the Microport kernel and several enhanced and additional utilities.
+
+	Most of the makefiles reasonably do the work involved in putting
+	together the binaries.  The makefile in this directory, which has
+	several names, will make everything.  First it will use the local
+	makefiles to build the libraries, then the utilities in ./cmd,
+	and last the kernel from the ./cf directory.
+
+	The targets that this Makefile knows about are:
+
+		all:		libs cmd unix
+		libs:		ml os io pwb em db
+		unix:		libs link
+		link:		cf
+		machine:	ml
+		system:		os
+		drivers:	io
+		pwbstuff:	pwb
+		emulstuff:	em
+		debugger:	db
+		commands:	cmd
+	
+	Making a kernel differs somewhat depending upon the source
+	package.  Some brief explanations about the procedures are
+	given here.
+
+	*   The Microport Source Code Enhancements package:
+
+	    Two makefiles must be changed before the make of the kernel
+	    will complete.  This is necessary because there are two
+	    source files that Microport is not permitted to ship.
+
+		ml/Makefile: Remove the instructions to build realmode.o
+			     from source.  The object is included.
+		os/Makefile: Remove the instructions to build dos.o
+			     from source since the object is included.
+			     Leave the instructions that archive the object.
+
+	    After making the changes to the makefiles, to make the kernel
+	    without first making all the utilities, the config utility can
+	    be made, then the kernel, with these commands from this directory:
+
+		cd cmd/config;make
+		cd ../..
+		make libs link
+
+	*   The Microport Source Code Educational package:
+
+	    This directory contains all of the objects necessary to make
+	    a kernel by simply issuing the command:
+
+		make link
+	    
+	    After modifying a source module, simply make the object and
+	    archive it with commands similar to the following:
+
+		cd source_dir
+		vi source.c
+		make source.o
+		ar rv ../lib? source.o
+	    
+	    then make a new kernel as before.
+
+	*   The Microport Driver Source Code packages:
+
+	    These packages include the source code necessary to remake
+	    one of the Microport peripheral drivers.  The source should
+	    be installed in the appropriate directory, either a Microport
+	    source hierarchy, or the Microport Link Kit that comes with
+	    the Runtime System and is usually installed in /usr/linkkit.
+	    Once the source code is installed, the objects can be created
+	    and archived with these commands:
+
+		cd source_dir
+		vi source1.c source2.c ...
+		make source1.o source2.o ...
+		ar rv ../lib?  source1.o source2.o ...
+
+	    The new kernel can then be made as before.
+
+
+	To make a kernel with the kernel debugger included, either
+	an environment variable must be defined, or the command can
+	be issued directly to the make program in the ./cf directory.
+
+	Before the debugger kernel is made, make sure that the utility
+	"unixsyms" is made, since it is used by cf/Makefile to put the
+	symbols into the kernel data space.
+
+		cd cmd/unixsyms;make
+		cd ../..
+
+	Now make the kernel with one of these two methods:
+
+		DEBUGLIB=../db.o	export DEBUGLIB
+
+	    will work with the iAPX286/Makefile, or
+
+		cd cf; make DEBUGLIB=../db.o wini
+
+	    to issue the make command directly.

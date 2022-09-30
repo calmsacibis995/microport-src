@@ -1,0 +1,1 @@
+grep '^[b,i,o]' BASE | basecheck -s330,338 -d $1

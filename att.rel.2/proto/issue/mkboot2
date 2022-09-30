@@ -1,0 +1,33 @@
+set -x
+format /dev/rdsk/0s24
+format -f 0 -l 0 /dev/rdsk/0s15
+mkfs /dev/dsk/0s25 680 7 9
+labelit /dev/dsk/0s25 mnt "boot#2"
+mount /dev/dsk/0s25 /mnt
+set +x
+cpio -pvduma /mnt <<!
+/bin/rm
+/bin/df
+/bin/mv
+/bin/ln
+/bin/cp
+/bin/expr
+/etc/mknod
+/etc/mount
+/etc/umount
+/etc/setmnt
+/etc/setup
+/etc/inittab
+/etc/getty
+/etc/gettydefs
+!
+set -x
+cp /usr/src/cmd/.adm/iAPX286/checklist.20 /mnt/etc/checklist
+cp /usr/src/cmd/.adm/iAPX286/fstab.20 /mnt/etc/fstab
+cp /usr/src/uts/iAPX286/unix.20w /mnt/unix
+set +x
+ls -lR /mnt
+umount /dev/dsk/0s25
+ib /dev/rdsk/0s15 /dev/rdsk/0s24
+sync;sync
+fsck /dev/dsk/0s25

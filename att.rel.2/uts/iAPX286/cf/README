@@ -1,0 +1,46 @@
+iAPX286 @(#)README	1.2
+
+To rebuild a kernel on the 310, perform the following steps:
+1.	Execute "cd /usr/src/uts/iAPX286/cf".
+2.	Edit the appropriate dfile for the system you are going to build.
+		(dfile.20w for a system to run on a 20Mb winchester, dfile.40w
+		for a system to run on a 40Mb winchester, or dfile.f for a
+		system to run on a floppy)
+3.	If you made any changes to the dfile, execute "rm current.*".  This
+		will cause config to be called to rebuild the needed
+		configuration source files.
+4.	Execute: "make -f cf.mk VER=ver type [install]".
+	Where:	"ver" is the version stamp to be used,
+		"type" is "wini20", "wini40", or "flop" to make a kernel to run
+			on a 20Mb winchester, 40Mb winchester, or floppy
+			respectively, and
+		the optional "install" will cause the kernel that is built to
+			be copied to /.
+
+*** NOTE WELL!!! ***
+The standard kernel configuration does not have the floating point emulator
+configured into the system.  If you do not have an 80287 coprocessor and you
+intend to use any floating point operations, you must build a kernel that
+includes the floating point emulator.  The emulator is specified by adding
+the following line to the dfile just before the line specifying the number
+of buffers:
+	"emul	0	1"
+
+The standard kernel configuration will not allow you to rebuild the kernel in
+1/2 Megabyte of main memory because ld(1) will not be able to fit in memory. A
+system with the following changes to the dfile can be built on a 1 Megabyte
+system and run on a 1/2 Megabyte system so that it can be used to build a
+system without a floating point emulator:
+	delete the line specifying the driver for "lp", if present
+	delete the line specifying the driver for "emul", if present
+	delete the line specifying the driver for "sxt", if present
+	buffers	32
+	inodes	50
+	files	50
+	clists	75
+	mesg	0
+	shmem	0
+	sema	0
+If the emulator is to be included in a kernel being configured on a 1/2
+Megabyte system, still more will have to be removed from the kernel being run
+to do the configuration.

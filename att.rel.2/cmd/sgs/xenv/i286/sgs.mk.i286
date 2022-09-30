@@ -1,0 +1,89 @@
+#ident	"@(#)ccs-s5:xenv/i286/sgs.mk.i286	1.7"
+#
+# Makefile for building native iAPX286 CCS
+#
+
+MAKE=make
+SGS=
+ROOT=
+DEFS=ARCH=AR16WR ARFORMAT=PORTAR FLEX=-DFLEXNAMES ROOT=$(ROOT) SGS=$(SGS)
+SMALLDEFS=MODEL=small MSPEC=-Ms $(DEFS)
+LARGEDEFS=MODEL=large MSPEC=-Ml $(DEFS)
+
+all: AR AS CMD COMP CPP DIS DUMP LORDER LD NM OPTIM SIZE STRIP
+
+AR:
+	cd ar/i286; $(MAKE) $(LARGEDEFS)
+AS:
+	cd as/i286; $(MAKE) $(LARGEDEFS) NATIVE=-DNATIVE
+CMD:
+	cd cmd/i286; $(MAKE) $(LARGEDEFS)
+COMP:
+	cd comp/i286; $(MAKE) $(LARGEDEFS)
+CPP:
+	cd cpp/common; $(MAKE) $(LARGEDEFS) -f cpp.mk
+DIS:
+	cd dis/i286; $(MAKE) $(LARGEDEFS)
+DUMP:
+	cd dump/i286; $(MAKE) $(LARGEDEFS)
+LORDER:
+	cd lorder/i286; $(MAKE) $(LARGEDEFS)
+LD:
+	cd ld/i286; $(MAKE) $(LARGEDEFS)
+NM:
+	cd nm/i286; $(MAKE) $(LARGEDEFS)
+OPTIM:
+	cd optim/i286; $(MAKE) $(LARGEDEFS)
+SIZE:
+	cd size/i286; $(MAKE) $(LARGEDEFS)
+STRIP:
+	cd strip/i286; $(MAKE) $(LARGEDEFS)
+
+install: all
+	cd ar/i286; $(MAKE) $(LARGEDEFS) install
+	cd as/i286; $(MAKE) $(LARGEDEFS) NATIVE=-DNATIVE install
+	cd cmd/i286; $(MAKE) $(LARGEDEFS) install
+	cd comp/i286; $(MAKE) $(LARGEDEFS) install
+	cd cpp/common; $(MAKE) $(LARGEDEFS) -f cpp.mk install
+	cd dis/i286; $(MAKE) $(LARGEDEFS) install
+	cd dump/i286; $(MAKE) $(LARGEDEFS) install
+	cd lorder/i286; $(MAKE) $(LARGEDEFS) install
+	cd ld/i286; $(MAKE) $(LARGEDEFS) install 
+	cd nm/i286; $(MAKE) $(LARGEDEFS) install
+	cd optim/i286; $(MAKE) $(LARGEDEFS) install
+	cd size/i286; $(MAKE) $(LARGEDEFS) install
+	cd strip/i286; $(MAKE) $(LARGEDEFS) install
+	cd inc/i286; $(MAKE) install
+
+shrink clobber:
+	cd ar/i286; $(MAKE) clobber
+	cd as/i286; $(MAKE) clobber
+	cd cmd/i286; $(MAKE) clobber
+	cd comp/i286; $(MAKE) clobber
+	cd cpp/common; $(MAKE) -f cpp.mk clobber
+	cd dis/i286; $(MAKE)  clobber
+	cd dump/i286; $(MAKE) clobber
+	cd lorder/i286; $(MAKE) clobber
+	cd ld/i286; $(MAKE) clobber
+	cd nm/i286; $(MAKE) clobber
+	cd optim/i286; $(MAKE) clobber
+	cd size/i286; $(MAKE) clobber
+	cd strip/i286; $(MAKE) clobber
+	cd inc/i286; $(MAKE) clobber
+
+clean:
+	cd ar/i286; $(MAKE) clean
+	cd as/i286; $(MAKE) clean
+	cd cmd/i286; $(MAKE) clean
+	cd comp/i286; $(MAKE) clean
+	cd cpp/common; $(MAKE) -f cpp.mk clean
+	cd dis/i286; $(MAKE)  clean
+	cd dump/i286; $(MAKE) clean
+	cd lorder/i286; $(MAKE) clean
+	cd ld/i286; $(MAKE) clean
+	cd nm/i286; $(MAKE) clean
+	cd optim/i286; $(MAKE) clean
+	cd size/i286; $(MAKE) clean
+	cd strip/i286; $(MAKE) clean
+#	cd inc/i286; $(MAKE) clean
+

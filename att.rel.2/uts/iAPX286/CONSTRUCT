@@ -1,0 +1,41 @@
+set -x
+#      @(#) iAPX286 CONSTRUCT 1.4 - 85/09/13
+#      Copyright (c) 1985 AT&T
+#        All Rights Reserved
+#      THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T
+#      The copyright notice above does not evidence any
+#      actual or intended publication of such source code.
+#
+#      unix286 must be unoptimised
+#
+${PFX}nm -vexh unix286.unopt >unix.nm
+sed "/\\.text[ 	]*|$/d" unix.nm >SEDFILE
+ed - SEDFILE<<!
+g.^.s..s/<s>.
+g.  *|.s..,/.
+g.0x[0-9a-f]\{4\}.s..&,/.
+g,[0-9a-f]\{4\}|.*,s,,,
+g,<s>\.,d
+1
+i
+s/	mov	\\$<s>u,/	mov	%ss,/
+s/\\$<s>u$/%ss/
+.
+w
+q
+!
+split -60 SEDFILE SED
+rm SEDFILE
+for sedfile in SED??
+do
+ed - $sedfile <<\!
+1i
+/<s>/{
+.
+$a
+}
+.
+w
+q
+!
+done

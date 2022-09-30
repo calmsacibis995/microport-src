@@ -1,0 +1,4 @@
+/* iAPX286 @(#)complex	1.1 85/09/16 */
+/*	@(#)complex	1.2	*/
+typedef struct { float real, imag; } complex;
+typedef struct { double dreal, dimag; } dcomplex;

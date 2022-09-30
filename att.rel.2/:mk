@@ -1,0 +1,32 @@
+#	@(#)	1.18
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 UNIX"
+echo "does not automatically make cross-ccs"
+
+if [ "$ROOT" = "" ] ; then
+	PATH=/bin:/etc:/usr/bin; export PATH
+fi
+chmod +x :mk*
+./:mkhead
+./:mksyshead
+./:mklib \*
+./:mkboot
+./:mkcmd \* .adm
+./:mkuts clobber
+./:mkuts flop "NAME=unix.fl"
+./:mkuts wini20 "NAME=unix.20w"
+./:mkuts wini40  "NAME=unix.40w"
+./:mksgs
+cd proto/issue; make -f issue.mk install clean

@@ -1,0 +1,32 @@
+set -x
+kmount /dev/dsk/0s25 /mnt
+cd /mnt
+set +x
+cpio -pvduma / <<!
+bin/rm
+bin/df
+bin/mv
+bin/ln
+bin/cp
+bin/expr
+etc/mknod
+etc/mount
+etc/umount
+etc/setmnt
+etc/getty
+etc/gettydefs
+etc/setup
+etc/inittab
+etc/checklist
+etc/fstab
+unix
+!
+set -x
+cd /
+kumount /dev/dsk/0s25
+mv /bin/setup.2 /bin/setup_
+echo dsk/0s6 /|setmnt
+sync;sync;sync
+set +x
+echo base 1 > /olddiskdata
+echo "insert floppy set base #1 then type 'setup'"

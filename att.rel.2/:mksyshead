@@ -1,0 +1,65 @@
+#	@(#)	1.11
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Install iAPX286 UNIX system header files"
+
+if vax
+then
+	MACH=vax/sys
+elif pdp11
+then
+	MACH=pdp11/sys
+elif u3b
+then
+	MACH=3b/sys
+elif u3b2
+then
+	MACH=3b2/sys
+elif u3b5
+then
+	MACH=3b5/sys
+elif iAPX286
+then 
+	MACH=iAPX286/sys
+fi
+if [ ! -d $ROOT/usr/include ]
+then mkdir $ROOT/usr/include
+fi
+if [ ! -d $ROOT/usr/include/sys ]
+then mkdir $ROOT/usr/include/sys
+fi
+cd $ROOT/usr/include/sys
+rm -rf *
+for DIR in sys $MACH
+do
+	cd $ROOT/usr/src/uts/$DIR
+	echo "`pwd`:"
+	for FILE in *
+	do
+		if [ $FILE = realmode.h -o $FILE = realmode.sed -o $FILE = \
+			osmerge.h -o $FILE = sys.mk ]
+		then continue
+		fi
+		cp $FILE $ROOT/usr/include/sys
+		echo " $FILE\c"
+	done
+	echo		# newline after all files in dir have been listed.
+done
+cd $ROOT/usr/include/sys
+if [ "$ROOT" = "" ]
+then
+	chmod 664 *
+	chown bin *
+	chgrp bin *
+fi

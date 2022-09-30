@@ -1,0 +1,23 @@
+# # --------------------------------
+#	@(#)	1.1
+#
+# Safari 5 (Code name for AT&T UNIX/DOS PC
+#
+s5|Safari 5,
+	am,
+	cols#80,	lines#24,
+	bel=^G,	cr=\r,	clear=\E[2J\E[H,
+	el=\E[0K,	ed=\E[0J,	cup=\E[%i%p1%02d;%p2%02dH,
+	cud1=\E[B,	home=\E[H,	cub1=\b,
+	cuf1=\E[C,	cuu1=\E[A,	dch1=\E[1P,
+	dl1=\E[1M,	smso=\E[2;7m,	smul=\E[4m,
+	rmso=\E[m,	rmul=\E[m,	ich1=\E[1@,
+	il1=\E[1L,	kbs=\b,	kcud1=\E[B,
+	kf1=\EOc,	kf2=\EOd,	kf3=\EOe,
+	kf4=\EOf,	kf5=\EOg,	kf6=\EOh,
+	kf7=\EOi,	kf8=\EOj,	kcub1=\E[D,
+	kcuf1=\E[C,	kcuu1=\E[A,	nel=\r\n,
+	ind=\n,
+
+
+

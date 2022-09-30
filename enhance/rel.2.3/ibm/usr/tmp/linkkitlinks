@@ -1,0 +1,3 @@
+:
+ln usr/linkkit/cf/Linkkit.mk usr/linkkit/cf/Makefile
+ln usr/linkkit/doc/README usr/linkkit

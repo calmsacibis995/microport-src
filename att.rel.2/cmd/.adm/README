@@ -1,0 +1,12 @@
+iAPX286 @(#)README	1.1
+
+There are a few files in the iAPX286 directory that depend on the disk
+configuration.  All of these files contain a ".20" or a ".40" in the file name.
+Before :mkcmd can be used to install all of the defaults for these files,
+you must run "make -f .adm.mk disk20" to set up the appropriate files to be
+installed on a 20Mb disk system or "make -f .adm.mk disk40" to set up the
+appropriate files to be installed on a 40Mb disk system.
+
+If new default hard disks are added for the 286, ".adm.mk" should be modified
+to install the appropriate files for the other disks and the files must be
+added to the iAPX286 directory.

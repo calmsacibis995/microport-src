@@ -1,0 +1,19 @@
+#	@(#)	1.5
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 boot code"
+
+cd uts/boot
+make -f boot.mk install
+make -f boot.mk clobber

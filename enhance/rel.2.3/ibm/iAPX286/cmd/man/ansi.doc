@@ -1,0 +1,532 @@
+
+	        ANSI Sequences supported by
+	    Microport Console Driver (rel 1.3.8)
+
+NO!	APC - Application Program Command
+    ESC ? data ST
+	data : application dependent data (0x20 .. 0x7e)
+	ST   : String Terminator
+
+CBT - Cursor Backward Tabulation
+    ESC [ p Z
+	p : # tab stops to back up
+
+NO!	CCH - Cancel Character
+    ESC T
+
+CHA - Cursor Horizontal Absolute
+    ESC [ p G
+	p : column # to move to
+
+CHT - Cursor Horizontal Tabulation
+    ESC [ p I	(N.I.)
+	p : # tab stops to advance to
+
+CNL - Cursor Next Line
+    ESC [ p E
+	p : # lines to advance
+
+CPL - Cursor Preceding Line
+    ESC [ p F
+	p : # lines to back up
+
+CPR - Cursor Position Report
+    ESC [ h ; v R	(response from DSR 6)
+	h : horizontal (column) #
+	v : vertical (line) #
+
+CRM - Control Representation Mode
+    ESC [ 3 h - set	(display control sequences)
+    ESC [ 3 l - reset	(do not display control sequences)
+
+CSI - Control Sequence Introducer
+    ESC [		(Introducer for "control sequences")
+
+NO!	CTC - Cursor Tabulation Control
+    ESC [ p W
+	p = 0 : set horizontal tab stop
+	    1 : set vertical tab stop
+	    2 : clear horizontal tab stop
+	    3 : clear vertical tab stop
+	    4 : clear all horizontal tab stops in active line
+	    5 : clear all horizontal tab stops in device
+	    6 : clear all vertical tab stops
+
+CUB - Cursor Backward
+    ESC [ p D
+	p : # colums to back up cursor
+
+CUD - Cursor Down
+    ESC [ p B
+	p : # lines to advance cursor
+
+CUF - Cursor Forward
+    ESC [ p F
+	p : # columns to advance cursor
+
+CUP - Cursor Position
+    ESC [ h ; v H
+	h : horizontal (column) #
+	v : vertical (line) #
+
+CUU - Cursor Up
+    ESC [ p A
+	p : # lines to back up cursor
+
+CVT - Cursor Vertical Tabulation
+    ESC [ p Y
+	p : # vertical tabs to advance
+
+NO!	DA  - Device Attributes
+    ESC [ p c
+	p =  0 : request device attributes
+	p <> 0 : repsonse from device (p = device dependent attributes)
+
+NO!	DAQ - Define Area Qualification
+    ESC [ p o
+	p = 0 : accept all input, do not transmit (guarded)
+	    1 : accept no input (protected)
+	    2 : accept graphics
+	    3 : accept numerics
+	    4 : accept alphabetics
+	    5 : right justify in area
+	    6 : zero fill in area
+	    7 : horizontal tab stop at start of area
+	    8 : accept no input (protected), but select for
+		transmission (unguarded)
+	    9 : space fill in area
+
+DCH - Delete Character
+    ESC [ p P
+	p : # characters to delete
+
+NO!	DCS - Device Control String
+    ESC P data ST
+	data : device dependent data
+	ST : String Terminator
+
+DECSTBM - set scrolling region
+    ESC [ Rt ; Rb r
+	Rt : Top row of scrolling region
+	Rb : Bottom row of scrolling region
+	Defaults:
+	    Rt :		physical top of screen
+	    Rb :		physical bottom of screen
+	    ESC [ Rt :		set top to physical screen top,
+				set bottom to physical screen bottom
+	    ESC [ p r :		set top to p,
+				set bottom to physical screen bottom
+	    ESC [ 0 ; p r :	set top to physical screen top,
+				set bottom to physical screen bottom
+
+
+DL  - Delete Line
+    ESC [ p M
+	p : # lines to delete
+
+NO!	DMI - Disable Manual Input
+    ESC `
+	(note: normally follows KAM)
+
+SOME!	DSR - Device Status Report
+	    ESC [ p n
+NO!		p = 0 : (response) READY, No Errors
+NO!		    1 : (response) BUSY - Retry Later
+NO!		    2 : (response) BUSY - Will notify with DSR
+NO!		    3 : (response) ERROR - Retry
+NO!		    4 : (response) ERROR - Will notify with DSR
+		    5 : (request) Report Status using DSR or DCS
+		    6 : (request) Report Active Position using CPR
+
+NO!	EA  - Erase in Area
+    ESC [ p O
+	p = 0 : erase from active position to end of area
+	    1 : erase from start of area to active position
+	    2 : erase all of area
+
+NO!	EBM - Editing Boundary Mode
+    ESC [ 19 h	- set	(erasures not limited to displayed area)
+    ESC [ 19 l	- reset	(erasures are limited to displayed area)
+
+ECH - Erase Character
+    ESC [ p X
+	p : # characters to erase (cursor doesn't move)
+
+ED  - Erase in Display
+    ESC [ p J
+	p = 0 : erase from active position to end of display inclusive
+	    1 : erase from start to active position inclusive
+	    2 : erase all of display
+
+NO!	EF  - Erase in Field
+    ESC [ p N
+	p = 0 : erase from active position to end of field inclusive
+	    1 : erase from start of field to active position inclusive
+	    2 : erase all of field
+	(note: fields are all data between horizontal tab stops)
+
+EL  - Erase in Line
+    ESC [ p K
+	p = 0 : erase from active position to end of line inclusive
+	    1 : erase from start to active position inclusive
+	    2 : erase all of line
+
+NO!	EMI - Enable Manual Input
+    ESC b
+	(note: normally follows KAM)
+
+NO!	EPA - End of Protected Area
+    ESC W
+
+NO!	ERM - Erasure Mode
+    ESC [ 6 h	- set	(erase all characters)
+    ESC [ 6 l	- reset	(erase only unprotected characters)
+
+NO!	ESA - End of Selected Area
+    ESC G
+	Defines end of area to be transmitted
+
+	FEAM - Format Effector Action Mode
+    ESC [ 13 h	- set	(do not perform control sequences)
+    ESC [ 13 l	- reset	(perform control sequences)
+
+NO!	FETM - Format Effector Transfer Mode
+    ESC [ 14 h	- set	(do not transmit format effectors)
+    ESC [ 14 l	- reset	(transmit format effectors)
+
+FNT - Font Selection
+    ESC [ p m
+	p = 10 : select primary font			NOT-COMPATIBLE
+	    11 : select first alternative font		NOT-COMPATIBLE
+	    12 : select second alternative font		NOT-COMPATIBLE
+NO!	     .    .
+NO!	     .    .
+NO!	    19 : select ninth alternative font
+
+NO!	GATM - Guarded Area Transfer Mode
+    ESC [ 1 h	- set	(transmit all data)
+    ESC [ 1 l	- reset	(transmit only unguarded data)
+
+NO!	GSM - Graphic Size Modification
+    ESC [ h ; w ! B
+	h : height (%) (default 100 %)
+	w : width (%)  (default 100 %)
+
+NO!	GSS - Graphic Size Selection
+    ESC [ p ! C
+	p : height in decipoints (width a fixed ratio of height)
+
+NO!	HEM - Horizontal Editing Mode
+    ESC [ 10 h	- set	(ins/del characters behind active position)
+    ESC [ 10 l	- reset	(ins/del characters forward of active position)
+
+HPA - Horizontal Position Absolute
+    ESC [ p `
+	p : horizontal (column) # to move cursor to
+
+HPR - Horizontal Position Relative
+    ESC [ p a
+	p : # horizontal (colum) to advance cursor
+
+NO!	HTJ - Horizontal Tab with Justify
+    ESC I
+	Tabs following data to next tab stop
+
+NO!	HTS - Horizontal Tabulation Set
+    ESC H
+	Sets horizontal tab at active position
+
+HVP - Horizontal and Vertical Position
+    ESC [ h ; v f
+	h : horizontal (column) # to move active position to
+	v : vertical (line) # to move active position to
+
+ICH - Insert Character
+    ESC [ p @
+	p : # characters to insert
+
+IL - Insert Line
+    ESC [ p L
+	p : # lines to insert
+
+IND - Index
+    ^J
+
+NO!	INT - Interrupt
+    ESC 1
+	Interrupt current process
+
+IRM - Insertion Replacement Mode
+    ESC [ 4 h	- set	(new characters inserted before/after current
+			 characters - see HEM)
+    ESC [ 4 l	- reset	(new characters replace current characters)
+
+NO!	JFY - Justify
+    ESC [ p ! F
+	p = 0 : terminate all justify action
+	    1 : fill action on
+	    2 : interword spacing
+	    3 : letter spacing
+	    4 : hyphenation
+	    5 : flush left margin
+	    6 : center text between margins
+	    7 : flush tifht margin
+	    8 : Italian form
+
+NO!	KAM - Keyboard Action Mode
+    ESC [ 2 h	- set	(disable manual input)
+    ESC [ 2 l	- reset	(enable manual input)
+
+LNM - Line Feed Mode
+    ESC [ 20 h	- set (LF implies CR/LF)
+    ESC [ 20 l	- reset (LF implies LF only)
+
+NO!	MATM - Multiple Area Transfer Mode
+    ESC [ 15 h	- set	(transmit all selected areas)
+    ESC [ 15 l	- reset	(transmit only single selected area)
+
+NO!	MC - Media Copy
+    ESC [ p i
+	p = 0 : copy to primary auxiliary device
+	    1 : copy from primary auxiliary device
+	    2 : copy to secondary auxiliary device
+	    3 : copy from secondary auxiliary device
+	    4 : turn off copying rec'd data to primary auxiliary device
+	    5 : turn on copying rec'd data to primary auxiliary device
+	    6 : turn off copying rec'd data to seconadary auxiliary device
+	    7 : turn on copying rec'd data to seconadary auxiliary device
+
+NO!	MW - Message Waiting
+    ESC U
+
+NEL - Next Line
+    ESC E
+
+NO!	NP - Next Page
+    ESC [ p U
+
+NO!	OSC - Operating System Command
+    ESC ]
+
+NO!	PLD - Partial Line Down
+    ESC K
+	(subscript)
+
+NO!	PLU - Partial Line Up
+    ESC L
+	(superscript)
+
+NO!	PM - Privacy Message
+    ESC ^ data ST
+	data : device dependent data (0x20 .. 0x7e)
+	ST : String Terminator
+
+NO!	PP - Preceeding Page
+    ESC [ p V
+	p : # pages to back up
+
+NO!	PU1/2 - Private Use One/Two
+    ESC Q	- Private Use 1
+    ESC R	- Private Use 2
+
+NO!	PUM - Position Unit Mode
+    ESC [ 11 h	- set	(parameters indicate decipoints)
+    ESC [ 11 l	- reset	(parameters indicate character positions)
+
+NO!	QUAD - QUAD
+    ESC [ p ! H
+	p = 0 : flush left
+	    1 : flush left and fill with leader
+	    2 : center
+	    3 : center and fill with leader
+	    4 : flush right
+	    5 : flush right and fill with leader
+
+YES?	REP - Repeat
+    ch ESC [ cnt b
+	ch  : character to be repeated
+	cnt : amt to be repeated (after initially written)
+
+RI - Reverse Index
+    ESC M
+
+YES?	RIS - Reset to Initial State
+    ESC c
+
+RM - Reset Mode
+    ESC [ p l
+	p : mode to reset
+
+NO!	SATM - Area Transfer Mode
+    ESC [ 17 h	- set	(all data to be transmitted)
+    ESC [ 17 l	- reset	(SSA/ESA/DAQ defines area to be transmitted)
+
+SD - Scroll Down
+    ESC [ p T
+	p : # lines to scroll down
+
+NO!	SEM - Select Editing Extent Mode
+    ESC [ p Q
+	p = 0 : edit in display
+	    1 : edit in line
+	    2 : edit in field
+	    3 : edit in qualified area
+
+SGR - Select Graphic Rendition
+    ESC [ p m
+	p = 0 : primary rendition
+	    1 : bold
+NO!	    2 : faint (light intensity)
+	    3 : italic			(enable/disable blink	*NON-ANSI*)
+	    4 : underscore
+	    5 : slow blink
+NO!	    6 : rapid blink		(same as 5)
+	    7 : negative (reverse) image
+	    8 : reserved		(invisible		*NON-ANSI*)
+NO!	    9 : reserved
+	   10 : primary font		(disable chars < 0x1F	*NON-ANSI*)
+	   11 : display chars < 0x1F as graphic chars		(*NON-ANSI*)
+	   12 : force 8th bit on (alternate graphic chars)	(*NON-ANSI*)
+NO!	    . : "
+NO!	    . : "
+NO!	   19 : select ninth alternate font
+	   20 : load cga color-select reg			(*NON-ANSI*)
+	   21 : set 8 bit attribute	(BI BBB FI FFF)
+					 BI  - Background Intensity
+					 BBB - Background Color
+					 FI  - Foreground Intensity
+					 FFF - Foreground Color
+	   22 : set hardware underline cursor
+	   23 : set hardware block cursor
+	   24 : set hardware cursor off
+	   25 : enable steady block cursor (disable hardware cursor)
+	   26 : disable steady block cursor (enable hardware cursor)
+	   27 : change cursor style	(SSEE)
+					 SS - Start Scan Line
+					 EE - End Scan Line
+
+	   30 : black foreground
+	   31 : red foreground
+	   32 : green foreground
+	   33 : yellow foreground
+	   34 : blue foreground
+	   35 : magenta foreground
+	   36 : cyan foreground
+	   37 : white foreground
+
+	   40 : black background
+	   41 : red background
+	   42 : green background
+	   43 : yellow background
+	   44 : blue background
+	   45 : magenta background
+	   46 : cyan background
+	   47 : white background
+
+NO!	SL - Scroll Left
+    ESC [ p ! @
+	p : # columns to scroll left
+
+SM - Set Mode
+    ESC [ p h
+	p : mode to set
+
+NO!	SPA - Start of Protected Area
+    ESC V
+
+NO!	SPI - Spacing Increment
+    ESC h ; v ! G
+	h : horizontal spacing (decipoints)
+	v : vertical spacing (decipoints)
+
+NO!	SR - Scroll Right
+    ESC [ p ! A
+	p : # columns to scroll right
+
+NO!	SRM - Send-Receive Mode
+    ESC [ 12 h	- set	(
+    ESC [ 12 l	- reset	(
+
+NO!	SRTM - Status Report Transfer Mode
+    Not Implemented
+
+NO!	SS2/2 - Single Shift Two/Three
+    Not Implemented
+
+NO!	SSA -Start of Selected Area
+    ESC F
+
+NO!	ST - String Terminator
+    ???
+
+NO!	STS - Set Transmit State
+    Not Implemented
+
+SU - Scroll Up
+    ESC [ p S
+	p : # lines to scroll up
+
+NO!	TBC - Tabulation Clear
+    ESC [ p g
+	p = 0 : clear horizontal tab at active position
+	    1 : clear vertical tab at active position
+	    2 : clear all horizontal tabs in active line
+	    3 : clear all horizontal tabs in device
+	    4 : clear all vertical tabs
+
+NO!	TSM - Tabulation Stop Mode
+    ESC [ 18 h	- set
+    ESC [ 18 l	- reset
+
+NO!	TSS - Thin Space Specification
+    Not Implemented
+
+NO!	TTM - Transfer Termination Mode
+    Not Implemented
+
+NO!	VEM - Vertical Editing Mode
+    Not Implemented
+
+VPA - Vertical Position Absolute
+    ESC [ p d
+	p : line # to move cursor to
+
+VPR - Vertical Position Relative
+    ESC [ p e
+	p : # lines to advance cursor
+
+NO!	VTS - Vertical Tabulation Set
+    Not Implemented
+
+ESC  '6':		/* toggle insert/replace mode */
+ESC  '7':		/* save cursor */
+			save current cursor position, cursor shape,
+			current attributes, default fill character, 
+			font mode, default mode, last character sent
+
+ESC  '8':		/* restore cursor */
+			restores those thing saved by the save cursor
+
+ESC  'E':		/* NEL - next line */
+ESC  'D':		/* IND - index */
+ESC  'H':		/* HTS - horiz. tab stop */
+ESC  'M':		/* RI - reverse index */
+ESC  'Z':		/* DECID - identify terminal */
+ESC  'c':		/* RIS - reset initialization sequence*/
+
+ESC [ ? 6 h	set ORIGIN MODE
+			Sets cursor home position (Row 1, Column 1) to the
+			top left position of the current scrolling region.
+
+			In addition, in origin mode the clear screen is
+			as follows:
+			    clear from top is from top of scrolling region
+			    clear to bottom is from top of scrolling region
+
+			otherwise:
+			    clear from top is from top of physical screen
+			    clear to bottom is from top of physical screen
+
+
+ESC [ ? 6 l	reset ORIGIN MODE
+

@@ -1,0 +1,82 @@
+#	iAPX286 @(#)shutdown.sh	1.6
+#	Shutdown the system
+
+if [ `pwd` != / ]
+then
+	echo "$0: You must be in the root directory (/) to use shutdown"
+	exit 1
+fi
+grace=60
+initstate=0
+askconfirmation=yes
+while [ $# -gt 0 ]
+do
+	case $1 in
+	-g[0-9]* )
+		grace=`expr "$1" : '-g\([0-9]*\)'`
+		;;
+	-i[0-6abcqsQS] )
+		initstate=`expr "$1" : '-i\(.\)'`
+		;;
+	-y )
+		askconfirmation=
+		;;
+	-* )
+		echo "Illegal flag argument '$1'"
+		exit 1
+		;;
+	* )
+		echo "Usage:  $0 [ -y ] [ -g<grace> ] [ -i<initstate> ]"
+		exit 1
+		;;
+	esac
+	shift
+done
+
+echo '\nShutdown started.    \c'
+date
+echo
+
+sync
+cd /
+a="`who | wc -l`"
+if [ $a -gt 1 -a $grace -gt 0 ]
+then
+	echo "Do you want to send your own message? (y or n):   \c"
+	read b
+	if [ "$b" = "y" ]
+	then
+		echo "Type your message followed by ctrl d....\n"
+		su adm -c /etc/wall
+	else
+		su adm -c /etc/wall <<!
+PLEASE LOG OFF NOW ! ! !
+System maintenance about to begin.
+All processes will be killed in $grace seconds.
+!
+	fi
+	sleep $grace
+fi
+/etc/wall <<-!
+	THE SYSTEM IS BEING SHUT DOWN NOW ! ! !
+	Log off now or risk your files being damaged.
+
+!
+sleep $grace
+if [ $askconfirmation ]
+then	
+	echo "Do you want to continue? (y or n):   \c"
+	read b
+else
+	b=y
+fi
+if [ "$b" != "y" ]
+then
+	/etc/wall <<-\!
+		False Alarm:  The system will not be brought down.
+	!
+	echo 'Shut down aborted.'
+	exit 1
+fi
+
+/etc/init $initstate

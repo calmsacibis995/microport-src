@@ -1,0 +1,32 @@
+
+NAME
+	lpinit - initialize the parallel ports
+
+SYNOPSIS
+	lpinit [port1 port2 ... portn]
+
+DESCRIPTION
+	If a parallel adaptor is found at the specified I/O port(s)
+	the port is reinitialized.  (A 0xc is written to the Printer
+	control port to select and start it.)  
+
+	This causes any printer connected to the port to be initialized.
+
+EXAMPLE
+		lpinit 3bc 378 278
+	would initialize the monochrome parallel adaptor, standard 
+	parallel adaptor and the alternate parallel adaptor.
+
+FILES
+	/usr/spool/lp/*
+	/dev/lp
+
+SEE ALSO
+	accept(1M), enable(1), lp(1), lpadmin(1M), lpsched(1M),
+	lpstat(1). 
+
+WARNING
+	Printer initialization resets the forms control and sets the
+	default printer settings.  It is bad practice to initialize
+	the printer when the LP scheduler (lpsched) is running or the 
+	printer is in use.

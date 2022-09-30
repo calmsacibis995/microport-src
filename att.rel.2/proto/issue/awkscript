@@ -1,0 +1,11 @@
+$9 !~ /dev\/sxt/ && $3 !~ /boot/ {
+	file=$9
+	link="-"
+	if ( $10 ~ /\.adm/ ) file=$10
+	if ( $10 ~ /LINK_/) link=$10
+	if ($1 ~ /^[b,i,o]/ && $3 != "-" ) {
+		printf "%s\t?\t%s\t%s\t\n",file,link,$3
+		if ( $3 != "base" && $8 != "dir" && $9 !~ /\/tmp\// )
+			print $9 " " $3 > "/etc/mkroom_list"
+		}
+	}

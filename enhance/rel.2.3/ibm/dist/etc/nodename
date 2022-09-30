@@ -1,0 +1,13 @@
+:
+# This script modifies the nodename field in the utsname struct,
+# for CU and UUCP's edification.  See /usr/include/sys/utsname.h.
+
+if [ $# -ne 0 ]
+then
+	echo Changing system name to $1
+	patch -k /system5 -s +9 utsname $1
+	patch /system5 -s +9 utsname $1
+else
+	echo The system node name is "'"`patch -k /system5 -s +9 utsname`"'"
+fi
+

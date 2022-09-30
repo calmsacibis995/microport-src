@@ -1,0 +1,279 @@
+The Microport Link Kit allows software developers to build device drivers
+into the Microport System V/AT kernel.  We have had direct experience with two 
+types of drivers, disk drivers and character-stream drivers.
+
+Read master(4) for a sketchy write-up on the master file.
+Read config(1M) for a sketchy write-up on the format of 
+dfile.wini and dfile.flop.  The master file format has changed from the manual:
+there may be more than one interrupt vector given for a device (see asy and lp
+in master and handlers.c), and if there are, the element characteristics field 
+(Field 4 in Part 1) may have an 'n' in it; this numbers the different 
+interrupt entries (see asy in master and handlers.c).
+
+Interrupts.
+Interrupts in UNIX are heirarchical, that is, there are several levels
+from allowing all interrupts to allowing none, 
+where each level disallows all from before.
+There are 5 levels of interrupts used in SV/AT:
+0 allows all interrupts, 4 allows all but 60hz clock and disk interrupts,
+5 disallows parallel port interrupts, 6 disallows keyboard interrupts
+(leaving only serial ports left), and 7 disallows all interrupts.
+The first 8259 Programmable Interrupt Controller (PIC) 
+supplies interrupt vectors 32->39.  The second PIC 
+supplies interrupt vectors 40->47.  On the 8-bit (PC) bus, interrupt line
+2 is line 1 on the second PIC, and thus vector 41.  Lines 3->7 are 
+vectors 35-39. On the 16-bit extension (AT) bus, interrupt lines 10,
+11, 12, 14, and 15 are interrupt vectors 42, 43, 44, 46, and 47.
+The standard DOS hardware uses lines 3 & 4 for ASY, 5 & 7 for parallel port,
+6 for floppy disk, and 14 for fixed disk.  Line 2 on the PC bus and lines
+10, 11, 12, and 15 on the AT bus are available for use.  SV/AT does
+not yet support multiple boards using the same interrupt line.
+It is possible to miss interrupts; a driver should have a periodic
+timer that checks to see if an interrupt has been missed.
+The kernel has very limited stack space for interrupt routines, so it is 
+important for interrupt-level routines to be very conservative of
+local variables.
+
+The routines available for use by drivers are the following:
+
+spl0	()
+spl5	()
+spl6	()
+spl7	()
+splbio	()
+	These routines set the interrupt level, and return the current
+	spl.  Splbio is an alias for spl6 which prevents handlers from
+	being interrupted while manipulating the buf structures or
+	linked list headers.
+splx	(spl)
+	Splx resets the interrupt level to what was returned by 
+	spl[0-7] or splbio.
+
+bawrite
+bcopy(char * from, char * to, int count)
+	Copy count chars, from and to must be "live" (mapped-in)
+	kernel addresses.
+bscopy( (long)from, (long)to, (unsigned)count )
+	copies from one physical address to another and insures that
+	the addresses involved are properly mapped in the MMU.
+bdevsw
+bdflush
+bdwait
+bdwrite
+beep()
+	Make keyboard beep.  Tone and duration not parameterized.
+bflush
+bfreelist
+binval
+board
+bread
+breada
+brelse
+bwrite
+bzero(char * address, int count)
+	Set address[0] to address[count-1] to 0.
+	Address range must be "live".
+copyseg(int from, int to)
+	Copy 1 click (512 bytes) from click "from" to clock "to",
+	which are physical addresses divided by 512.
+clearseg(int seg)
+	Set click "seg" to 512 zero's.
+copyin(char * user address, char * kernel address, int count)
+	Copy count bytes from address in current user program
+	to kernel address.  Both must be "live" addresses, and
+	the user address must be accessible from the user program.
+copyout(char * kernel address, char * user address, int count)
+	Copy count bytes from kernel address to address in 
+	current user program.
+cpass()
+	Implement user program "write" system call.
+	Peek char from user process at current location,
+	update pointers in user struct.  Return char if one
+	available, or -1 if no more characters to be written.
+passc(char c)
+	Implement user program "read" system call.
+	Poke char c into user process at current location,
+	update pointers in user struct.  Return 0 if user
+	can read more characters, or -1 if at end of read.
+delay( int hertz)
+	Sleep(hertz). See #define for HZ in sys/param.h.
+	May only be called from system call level.
+eoi(level)
+	Very Important!  This routine is now a dummy for backward
+	compatibility.  The EOI has already been issued and the SPL set
+	by the time the device driver interrupt handler is called.
+freeslot
+	Part of error logging, which we don't use.
+fubyte  (char * user address)
+fuword  (char * user address)
+	Get byte or word out of current user program's data area.
+fuiword (char * user address)
+	Get word out of current user program's text ('i'nstruction) area.
+	Return -1 if user address is bad.
+	BUG: returns int -1, should return long to avoid confusion.
+subyte  (char * user address, char data)
+suword  (char * user address, int  data)
+suiword (char * user address, int  data)
+	As above, but poke instead of peek.
+	Returns 0 on good address.
+fpbyte  (long physical address)
+fpword  (long physical address)
+	Get byte or word at physical address.
+	Don't return anything.  If there is no hardware at given 
+	address, behavior is unpredictable; garbage is usually returned.  
+spbyte  (long physical address, char data)
+spword  (long physical address, int  data)
+	Set byte or word at physical address to data.
+useracc (char * user address, int count, int rw)
+	Check to see if user address[ 0 ] to address[ count -1 ]
+	can be read (rw == 1) or written (rw == 0).
+in   (int port)
+inb  (int port)
+out  (int port, int  data)
+outb (int port, char data)
+	Do 286 "I/O port" instructions.  
+	Inb returns a byte, in returns a word.
+	Outb sends a byte, out sends a word.
+	If no hardware at port address, in and inb return garbage.
+getrsc(char resource[ NRESOURCE])
+giversc(& char resource[ NRESOURCE])
+	Attain or relinquish control over certain
+	system-level resources.  See resource.h.
+	The data array contains one bit for every controlled resource.
+	Getrsc sleeps until all desired resources are free.
+	The caller must set every bit in the resource array that
+	corresponds to a desired resource, and must not call getrsc
+	again before first releasing all controlled resources.
+	Getsrc must be called from a system call, not from an 
+	interrupt or timeout.  Two get's in sequence can result
+	in deadlock.  Two give's in a row do not; however, a give
+	of a resource that is already free causes a console printout.
+iodone
+iowait
+
+max( unsigned int, unsigned int)
+min( unsigned int, unsigned int)
+	Return the maximum or minimum of 2 unsigned arguments.
+panic( char * string)
+	Print out string and stop the kernel.  Don't call this function
+	unless something really terrible has happened.
+physaddr(char * address)
+	Return the physical address corresponding to given mapped-in
+	address.  Address may be kernel or in current user program.
+	Returns nonsense if address not mapped in.
+physck
+physio
+
+printf  (char * format string, 0 or more arguments)
+	Prints onto current screen page at current cursor.
+	Just like user mode printf, but only takes
+	%d, %u, %o, %x, %ld, %lu, %lo, %lx, and %s.
+struct proc * runq
+	Start of list of process table entries which can execute.
+	If 0, no user program is ready to run.
+setjmp  (unsigned save[ 7 ])
+longjmp (unsigned save[ 7 ])
+	Non-local mark and goto.  Allows short-circuit return through
+	more than one procedure call.  See setjmp(3) in software manual.
+	In this version, however, setjmp always returns 0 and longjmp
+	always returns 1.
+psignal (struct proc * p, signo)
+	Send signal signo to process p.
+signal  (int pgrp, signo)
+	Send signal signo to all processes with process group pgrp.
+sleep	(char * kernel address, int priority)
+	Block until somebody calls wakeup ( kernel address ).  
+	If priority is numerically higher than PZERO,
+	ignores signals.  May only be called from system calls.
+wakeup	(char * kernel address)
+	Unblock all processes sleeping on address.
+	NOTE: address is never read from or written to.  It must simply
+	be a unique 32-bit number agreed upon in advance, thus
+	kernel addresses are handy.
+suser   ()
+	Returns whether or not current user process has super-user
+	access privileges.
+timeout (function * address, long argument, int hertz)
+	Function given by address is called with argument hertz
+	HZ's of a second after this routine is called.  May be called
+	from system call or interrupt level.  Timeout-ed routines
+	are called from a level 0 interrupt, so spl's are probably
+	needed inside the routine.
+struct user u
+	The user structure 'u' is the most important part of the system.
+	During system calls it is mapped to the system part of the
+	current user program.  These structure members are important
+	during I/O:
+	    u.u_error:
+		When there is any error in a system call
+		and the call must be refused, poke an error 
+		number (see sys/errno.h) into here.
+	    u.u_base:
+		User program base address for read/write.
+	    u.u_count:
+		Number of bytes left to read or write.
+	    u.u_offset:
+		Lseek offset in file for read or write.
+	    u.u_procp:
+		Pointer to proc structure entry.
+
+struct var v
+	Contails certain configurable array sizes and other stuff.
+	See sys/var.h for details.
+
+New routines available in Version 2.3
+	Must include the following files:
+	    "sys/types.h"
+	    "sys/param.h"
+	    "sys/mmu.h"
+	    "sys/seg.h"
+	    "sys/map.h"
+	    "sys/sysmacros.h"
+	    "sys/io_bufmgr.h"
+
+    io_getbuf	- Obtains a memory buffer and a selector to address it with.
+    io_expbuf	- Expands a buffer previously obtained by io_getbuf
+    io_freebuf	- Frees a buffer obtained by io_getbuf.
+    io_mapbuf	- Maps a physical buffer to a kernel virtual address.
+    io_unmapbuf	- Unmaps a physical buffer from a kernel virtual address.
+    io_getsel	- Get a selector from the io pool
+    io_freesel	- Free a selector
+    io_buftosel	- Translates kernel virtual buffer address to global selector.
+
+char * io_getbuf ((unsigned)size, (int)flags)
+	Obtains a memory buffer and a selector to address it with.
+	Returns kernel virtual address or NULL if not available;
+	    flags & 1 = clear buffer
+	    flags & 2 = prevent buffer from spanning 64k boundary
+			(not yet implemented)
+
+mmudesc ((int)sel, (paddr_t)addr, (int)lim, (int)acc)
+
+static io_adrstosel ((char *)adrs, (char *)subrname)
+
+io_expbuf ((char *)oldadrs, (unsigned)expandsize, (int)flags)
+	Expands a buffer previously obtained by io_getbuf.
+	Returns offset to new section (word aligned) or 0 if not expandable.
+	Note: Needs to check if current buffer can be expanded in-place.
+
+char *
+io_mapbuf ((paddr_t)addr, (unsigned)size)
+	Maps a physical buffer to a logical kernel virtual address.
+
+void
+io_freebuf ((char *)adrs)
+	Frees a buffer obtained by io_getbuf.
+
+void
+io_unmapbuf ((char *)adrs)
+	Frees the selector being used to map a buffer.
+
+paddr_t
+io_physaddr ((int)sel)
+
+io_getsel ((int) wait)
+	Get a selector from the io pool.
+
+void
+io_freesel ((int) sel)
+	Free a selector.

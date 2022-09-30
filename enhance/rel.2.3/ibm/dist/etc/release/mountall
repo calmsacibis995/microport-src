@@ -1,0 +1,38 @@
+#	iAPX286 @(#)mountall.sh	1.1
+#	Mount all file systems according to a file system table
+#	such as /etc/fstab.
+
+#	file-system-table format:
+#	column 1	block special file name of file system
+#	column 2	mount-point directory
+#	column 3	"-r" if to be mounted readonly
+#	column 4+	ignored
+#	White-space separates columns.
+#	Lines beginning with "#" are comments. Empty lines are ignored.
+
+if [ $# -lt 1 ]
+then
+	echo >&2 "Usage:  $0 file-system-table ..."
+	exit 1
+fi
+
+cat $* |
+	while read dev fs readonly dummy
+	do
+		case "${dev}" in
+		'#' | '' )	# Ignore comment lines, empty lines
+			continue
+		esac
+
+		#	First check file system state and repair if necessary.
+		msg=`/etc/fsstat ${dev} 2>&1`
+		if [ $? -ne 0 ]
+		then
+			echo "
+	${msg}
+	${dev} is being checked automatically."
+			/etc/fsck -y -t /fsck.tmp -D ${dev}
+		fi
+
+		/etc/mount ${dev} ${fs} ${readonly}
+	done

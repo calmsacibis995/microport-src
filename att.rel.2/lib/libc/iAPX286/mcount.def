@@ -1,0 +1,23 @@
+_m4_dnl_	@(#)	1.1
+_m4_dnl_
+_m4_dnl_   This file is to be run through the m4 macro processor along with
+_m4_dnl_   a iAPX286 assembly language program in the C library to generate a
+_m4_dnl_   profiled version of the C library function.
+_m4_dnl_
+_m4_define_(`UNIQ', 0)_m4_dnl_
+_m4_define_(`MCOUNT', `			/ Keep track of call-counts for profiling
+	.data
+M.UNIQ:	.value 0
+`#'if HUGE_M
+	.value 0
+`#'endif
+	.text
+	mov	$M.UNIQ,%si
+`#'if LARGE_M | HUGE_M | COMPACT_M
+	mov	$<s>M.UNIQ,%bx
+	lcall	_mcount
+`#'else
+	call	_mcount
+`#'endif
+	_m4_define_(`UNIQ', _m4_incr_(UNIQ))_m4_dnl_      # Bump UNIQ
+')_m4_dnl_

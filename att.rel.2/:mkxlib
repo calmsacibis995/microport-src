@@ -1,0 +1,95 @@
+#	@(#)	1.7
+# This sh creates the cross-libraries and installs them in the cross-
+# environment.  :mklib is used to create the native libraries
+#
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 Cross-Libraries"
+trap "LIB=;LIBP=;INC=;INCSYS=;ULIBDIR=;export LIB LIBP INC INCSYS ULIBDIR; exit 1;" 1 2 3 9 15
+LIB=
+LIBP=$LIB/libp
+ULIBDIR=$LIB
+INC=
+INCSYS=$INC/sys
+
+# Running pathedit for the native sgs may have altered the target
+# directories for the libraries.  Put out a warning.
+
+echo "WARNING: Target directories for the libraries is: $LIB"
+
+ls -ld $LIB $LIBP > /dev/null
+if [ $? -ne 0 ]
+then echo "LIB and/or LIBP may not exist - quit"
+exit 1
+fi
+export LIB LIBP ULIBDIR
+ls -ld $INC $INCSYS > /dev/null
+if [ $? -ne 0 ]
+then echo "INC and/or INCSYS may not exist - quit"
+exit 1
+fi
+export INC INCSYS
+cd lib
+args=`echo $* | sed -e s/termcap//`
+for i in $args
+do
+	if [ x$i = xlibF77 -o x$i = xlibI77 ]
+	then
+		echo "FORTRAN Libraries are not made for cross environment."
+		continue
+	fi
+	cd $i
+	echo ======= $i
+	if [ x$i = xlibcurses ]
+	then
+		make -f makefile "MODEL=small" clean
+		make -f makefile MODEL=small MSIZE=s libcurses.a
+		cp screen/libcurses.a $LIB/small
+		make -f makefile clean
+		make -f makefile MODEL=large MSIZE=l libcurses.a
+		cp screen/libcurses.a $LIB/large
+	elif [ x$i = xlibm ]
+	then
+		make -f makefile clean
+		(cd iAPX286 ; make -f makefile clean)
+		make -f makefile MSIZE=s MODEL=small all
+		(cd iAPX286 ; make -f makefile MSIZE=s MODEL=small all)
+		rm -f libm.a
+		i286ar rv libm.a *.o iAPX286/*.o
+		cp libm.a $LIB/small
+		rm -f libm.a
+		i286ar rv libm.a proflib/*.o iAPX286/proflib/*.o
+		cp libm.a $LIB/libp/small
+		
+		make -f makefile clean
+		(cd iAPX286 ; make -f makefile clean)
+		make -f makefile MSIZE=l MODEL=large all
+		(cd iAPX286 ; make -f makefile MSIZE=l MODEL=large all)
+		rm -f libm.a
+		i286ar rv libm.a *.o iAPX286/*.o
+		cp libm.a $LIB/large
+		rm -f libm.a
+		i286ar rv libm.a proflib/*.o iAPX286/proflib/*.o
+		cp libm.a $LIB/libp/large
+	else
+		make -f makefile clean
+		make -f makefile -e MODEL=small \
+	                         MSIZE=s install
+		make -f makefile clean
+		make -f makefile -e MODEL=large \
+	                         MSIZE=l install
+		make -f $i.mk clobber
+	fi
+	cd ..
+done

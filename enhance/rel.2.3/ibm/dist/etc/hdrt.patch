@@ -1,0 +1,9 @@
+patch $1 rootdev 0
+patch $1 pipedev 0
+patch $1 swapdev 1
+# release 1.3+:
+# don't need to patch nswap and swplo, if rooting on a hard disk.
+# these get assigned via divvy. we leave in the built-in values
+# for the floppy; that way one can use the same kernel for making
+# a floppy-rooted system, without having to change nswap and swplo.
+echo $0 done

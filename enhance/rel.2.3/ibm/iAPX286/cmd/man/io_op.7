@@ -1,0 +1,32 @@
+IO_OP(7)								IO_OP(7)
+
+NAME
+	io_op \- perform 286 I/O operations
+
+SYNOPSIS
+	#include <sys/io_op.h>
+
+	ioctl(fd, io_op, code);
+	int	fd, code;
+	struct	{
+		unsigned int	io_port;	/* Port number 		 */
+		unsigned int	io_word;	/* Word data stored here */
+		unsigned char	io_byte;	/* Byte data in here 	 */
+	} *io_op;
+
+	#define	IOCIOP_RB	(('I'<<8)|0)	/* Read  a byte		*/
+	#define	IOCIOP_RW	(('I'<<8)|1)	/* Read  a word		*/
+	#define	IOCIOP_WB	(('I'<<8)|2)	/* Write a byte		*/
+	#define	IOCIOP_WW	(('I'<<8)|3)	/* Write a word		*/
+
+DESCRIPTION
+	The io_op interface allows user programs to perform 286 I/O
+operations, through an ioctl(2) call on /dev/mem.  
+Code denotes whether a byte or a word is to be written or read.
+io_port contains the
+port number to be used, which must be in the range 0-0x3ff.
+io_word is the data to be written or read, for word operations.
+io_byte is the data to be written or read, for byte operations.
+
+	
+

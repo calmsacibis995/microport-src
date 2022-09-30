@@ -1,0 +1,27 @@
+
+KEYSET(1)							KEYSET(1)
+
+NAME 
+	keyset \- programmable function keys
+
+SYNOPSIS
+	keyset f[1-10] 'string'
+	keyset shift-f[1-10] 'string'
+	keyset ctrl-f[1-10] 'string'
+
+DESCRIPTION
+
+	Keyset programs the numbered function keys on the system console.
+The first argument must be any of f1 through f10, shift-f1 through
+shift-f10, or ctrl-f1 through ctrl-f10, and denotes the key combination
+to be reprogrammed.  The second string is the new value for the key.
+The value string may contain these escape sequences:
+
+	\123 style octal strings are collapsed into a single character.
+ 	\t gets replaced by a tab.
+ 	\n gets replaced by a newline.
+	\r gets replaced by a carriage return.
+	\b gets replaced by a backspace.
+	\s gets replaced by a blank.
+
+The 'true' strings (after processing) must be 16 characters or less.

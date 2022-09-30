@@ -1,0 +1,15 @@
+2/22/86		uport!dwight
+	This directory contains the source code for Big Boot;
+	i.e. the program that understands how to read a unix 
+	filesystem and kernel.  It came from the "boot" heirarchy 
+	on the Final System V.2 tape; and is for coff kernels.
+
+3/9/86		uport!dwight
+	This code supports accepting the disk parameters being
+	passsed via little boot.
+
+3/16/86		uport!dwight
+	Now looks for "/systemV"
+
+3/21/86		uport!dwight
+	This code now handles bad track mapping.

@@ -1,0 +1,385 @@
+#if SCCS
+#/*   %W% - %E% */
+#endif
+/*      machine dependent include file for b16 */
+
+# define LABEL	3
+# define HLABEL	4
+/* dummy names for RET and JMP in jump switches */
+# define SRET	-12
+# define SJMP	-14
+/* control flow effecting instructions */
+# define CALL	10
+# define LCALL	11
+# define RET	12
+# define LRET	13
+# define JMP	14
+# define LJMP	15
+# define JA	16
+# define JAE	17
+# define JB	18
+# define JBE	19
+# define JE	20
+# define JG	21
+# define JGE	22
+# define JL	23
+# define JLE	24
+# define JNA	25
+# define JNAE	26
+# define JNB	27
+# define JNBE	28
+# define JNE	29
+# define JNG	30
+# define JNGE	31
+# define JNL	32
+# define JNLE	33
+# define JNO	34
+# define JNP	35
+# define JNS	36
+# define JNZ	37
+# define JO	38
+# define JP	39
+# define JPE	40
+# define JPO	41
+# define JS	42
+# define JZ	43
+# define JCXZ	44
+# define LOOP	45
+# define LOOPE	46
+# define LOOPNE	47
+# define LOOPNZ	48
+# define LOOPZ	49
+# define REP	50
+# define REPNZ	51
+# define REPZ	52
+/* condition code effecting instructions */
+# define AAA	53
+# define AAD	54
+# define AAM	55
+# define AAS	56
+# define DAA	57
+# define DAS	58
+# define ADC	59
+# define ADCB	60
+# define ADD	61
+# define ADDB	62
+# define DEC	63
+# define DECB	64
+# define DIV	65
+# define DIVB	66
+# define IDIV	67
+# define IDIVB	68
+# define IMUL	69
+# define IMULB	70
+# define INC	71
+# define INCB	72
+# define MUL	73
+# define MULB	74
+# define NEG	75
+# define NEGB	76
+# define SBB	77
+# define SBBB	78
+# define SUB	79
+# define SUBB	80
+# define AND	81
+# define ANDB	82
+# define OR	83
+# define ORB	84
+# define XOR	85
+# define XORB	86
+# define CLR	87
+# define CLRB	88
+# define RCL	89
+# define RCLB	90
+# define RCR	91
+# define RCRB	92
+# define ROL	93
+# define ROLB	94
+# define ROR	95
+# define RORB	96
+# define SAL	97
+# define SALB	98
+# define SAR	99
+# define SARB	100
+# define SHL	101
+# define SHLB	102
+# define SHR	103
+# define SHRB	104
+# define CMP	105
+# define CMPB	106
+# define TEST	107
+# define TESTB	108
+/* condition code non-effecting instructions */
+# define CBW	109
+# define CWD	110
+# define LDS	111
+# define LEA	112
+# define LES	113
+# define MOV	114
+# define MOVB	115
+# define NOT	116
+# define NOTB	117
+# define POP	118
+# define PUSH	119
+# define XCHG	120
+# define XCHGB	121
+# define XLAT	122
+/* flag (condition code) set/reset instructions */
+# define CLC	123
+# define CLD	124
+# define CLI	125
+# define CMC	126
+# define LAHF	127
+# define POPF	128
+# define PUSHF	129
+# define SAHF	130
+# define STC	131
+# define STD	132
+# define STI	133
+/* string instructions */
+# define SCA	134
+# define SCAB	135
+# define SCMP	136
+# define SCMPB	137
+# define SLOD	138
+# define SLODB	139
+# define SMOV	140
+# define SMOVB	141
+# define SSTO	142
+# define SSTOB	143
+/* I/O instructions */
+# define IN	144
+# define INB	145
+# define OUT	146
+# define OUTB	147
+/* processor control instructions */
+# define ESC	148
+# define HLT	149
+# define INT	150
+# define INTO	151
+# define IRET	152
+# define LOCK	153
+# define WAIT	154
+/* extra instructions new to the 286 */
+# define ENTER	155
+# define LEAVE	156
+# define PUSHA	157
+# define POPA	158
+# define INS	159
+# define OUTS	160
+# define BOUND	161
+# define CTS	162
+# define LGDT	163
+# define SGDT	164
+# define LIDT	165
+# define SIDT	166
+# define LLDT	167
+# define SLDT	168
+# define LTR	169
+# define STR	170
+# define LMSW	171
+# define SMSW	172
+# define LAR	173
+# define LSL	174
+# define ARPL	175
+# define VERR	176
+
+/* Floating point instructions for the iAPX287 */
+# define F2XM1	177
+# define FABS	178
+# define FCHS	179
+# define FCLEX	180
+# define FCOMPP	181
+# define FDECSTP	182
+# define FINCSTP	183
+# define FINIT	184
+# define FLD1	185
+# define FLDL2E	186
+# define FLDL2T	187
+# define FLDLG2	188
+# define FLDLN2	189
+# define FLDPI	190
+# define FLDZ	191
+# define FNCLEX	192
+# define FNINIT	193
+# define FNOP	194
+# define FPATAN	195
+# define FPREM	196
+# define FPTAN	197
+# define FRNDINT	198
+# define FSCALE	199
+# define FSETPM	200
+# define FSQRT	201
+# define FTST	202
+# define FWAIT	203
+# define FXAM	204
+# define FXTRACT	205
+# define FYL2X	206
+# define FYL2XP1	207
+# define FLDCW	208
+# define FSTCW	209
+# define FNSTCW	210
+# define FSTSW	211
+# define FNSTSW	212
+# define FSTENV	213
+# define FNSTENV	214
+# define FLDENV	215
+# define FSAVE	216
+# define FNSAVE	217
+# define FRSTOR	218
+# define FBLD	219
+# define FBSTP	220
+# define FIADD	221
+# define FIADDL	222
+# define FICOM	223
+# define FICOML	224
+# define FICOMP	225
+# define FICOMPL	226
+# define FIDIV	227
+# define FIDIVL	228
+# define FIDIVR	229
+# define FIDIVRL	230
+# define FILD	231
+# define FILDL	232
+# define FILDLL	233
+# define FIMUL	234
+# define FIMULL	235
+# define FIST	236
+# define FISTL	237
+# define FISTP	238
+# define FISTPL	239
+# define FISTPLL	240
+# define FISUB	241
+# define FISUBL	242
+# define FISUBR	243
+# define FISUBRL	244
+# define FADD	245
+# define FADDS	246
+# define FADDL	247
+# define FADDP	248
+# define FCOM	249
+# define FCOMS	250
+# define FCOML	251
+# define FCOMP	252
+# define FCOMPS	253
+# define FCOMPL	254
+# define FDIV	255
+# define FDIVS	256
+# define FDIVL	257
+# define FDIVP	258
+# define FDIVR	259
+# define FDIVRS	260
+# define FDIVRL	261
+# define FDIVRP	262
+# define FFREE	263
+# define FLD	264
+# define FLDS	265
+# define FLDL	266
+# define FLDT	267
+# define FMUL	268
+# define FMULS	269
+# define FMULL	270
+# define FMULP	271
+# define FST	272
+# define FSTS	273
+# define FSTL	274
+# define FSTP	275
+# define FSTPS	276
+# define FSTPL	277
+# define FSTPT	278
+# define FSUB	279
+# define FSUBS	280
+# define FSUBL	281
+# define FSUBP	282
+# define FSUBR	283
+# define FSUBRS	284
+# define FSUBRL	285
+# define FSUBRP	286
+# define FXCH	287
+# define ST	288
+# define IMUL3A	290 /* 3 operand imul */
+# define IMUL3B	291 /* 3 operand imul */
+# define IMUL3C	292 /* 3 operand imul */
+# define IMUL3D	293 /* 3 operand imul */
+# define IMUL3S	294 /* 3 operand imul */
+# define IMUL3DI	295 /* 3 operand imul */
+
+/* the great catch-all, not used */
+# define OTHER	289
+
+/* begin comment character */
+
+# define CC '/'
+
+/* options */
+
+# define INVERT 1
+# define COMTAIL 1
+# define LIVEDEAD 16
+# define PEEPHOLE 1
+# define MAXOPS 2
+# define IDTYPE int
+# define IDVAL (-1)
+# define ILIMIT 7
+# ifdef AR32W
+# define SPACE 40587
+# else
+# define SPACE 20587
+# endif
+
+/* predicates and functions */
+
+# define islabel(p) (p != NULL && (p->op == LABEL || p->op == HLABEL))
+# define ishl(p) (p->opcode[0] != '.' || p->op == HLABEL)
+# define isuncbr(p) (p->op >= RET && p->op <= LJMP)
+# define isbr(p) (p->op >= RET && p->op <= LOOPZ )
+# define ishb(p) (p->op == RET || p->op == LRET || p->op == LJMP)
+# define isrev(p) (p->op >= JA && p->op <= JZ)
+# define setlab(p) (p->op = LABEL)
+# define setbr(p,l) {p->op = JMP; p->opcode = "jmp"; p->op1 = l; p->uniqid = IDVAL;}
+# define sinst(op) ( op == SMOV || op == SMOVB || op == SCMP || op == SCMPB || op == SCA || op == SCAB || op == SSTO || op == SSTOB ) /* string instruction */
+
+/* register names */
+
+# define AL 0x0001
+# define AH 0x0002
+# define AX 0x0003
+# define BL 0x0004
+# define BH 0x0008
+# define BX 0x000c
+# define CL 0x0010
+# define CH 0x0020
+# define CX 0x0030
+# define DL 0x0040
+# define DH 0x0080
+# define DX 0x00c0
+# define SI 0x0100
+# define DI 0x0200
+# define SP 0x0400
+# define BP 0x0800
+# define CS 0x1000
+# define DS 0x2000
+# define ES 0x4000
+# define SS 0x8000
+
+/* register classes */
+# define AR 0x00ff
+# define PR 0x0300
+# define FR 0x0c00
+# define GR 0x0fff
+# define SR 0xf000
+
+/* high/low modifier for register value array index */
+# define BASEREG 077
+# define RH 0200
+# define RL 0100
+# define MODREG (RH|RL)
+
+/* register information for live/dead analysis */
+
+# define REGS 0xffff
+# define RETREG retreg
+# define LIVEREGS ( CS | SS | BP | SP )
+
+#define INDX SI /* regs used for indexing */
+extern int retreg;

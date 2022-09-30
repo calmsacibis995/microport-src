@@ -1,0 +1,117 @@
+# issue needs to be same group as root
+
+echo "do you want to re-create the file 'files' (y/n) ?"
+read ANS
+if [ "$ANS" = 'y' ]
+then
+	echo "creating files, this may take a while"
+
+# create dummy pslinks files so that update will include them
+
+	for i in DWB acctcom admin base bc cflow config extfile fortran ipcrm \
+		 lp mailx manprog profiler sccs sgs spell sysdef units uucp
+	do
+		touch /tmp/$i\links
+	done
+	awk -f awkscript /issue/BASE | update >files
+	chmod 644 /etc/mkroom_list
+	echo "creation over \07"
+else
+	echo "do you want to update the files sizes (y/n) ?"
+	read ANS
+	if [ "$ANS" = 'y' ]
+	then
+		echo "updating files, this may take a while"
+
+# create dummy pslinks files so that update will include them
+
+		for i in DWB acctcom admin base bc cflow config extfile \
+			 fortran ipcrm lp mailx manprog profiler sccs sgs \
+			 spell sysdef units uucp
+		do
+			touch /tmp/$i\links
+		done
+
+		mv files files.bak
+		cat files.bak | update >files 
+		echo "update over \07"
+	fi
+fi
+
+/bin/rm -f missing.files tmp.files .issueflop d/* 2> /dev/null
+
+fgrep -v LINK_ files | filelist 2> missing.files |\
+sort -t\	 +1 -2 >  tmp.files
+
+# note that the awkscript can only cope with up to 10 product sets
+# at the moment this is sufficient as not all product sets need links
+
+/bin/rm -f /tmp/*links
+fgrep LINK_ files |\
+fgrep -v '?' |\
+awk '{printf("ln %s %s\n",substr($3,6),$1) > "/tmp/" $4 "links"}'
+chmod 700 /tmp/*links
+
+cat tmp.files | psplit
+
+if [ -f missing.files ]
+then
+	set `wc missing.files`
+	echo "there are $1 files missing, they are listed in missing.files\n"
+fi
+ 
+rm tmp.files
+
+
+echo "ready to cpio the contents of the following files to floppy disks"
+ls -C d/*
+
+echo "do you want to build the issue floppies (y/n) ?"
+read ANS
+if [ "$ANS" = 'y' ]
+then
+	echo "ignore '< /tmp/..links > ?' messages from cpio"
+	exec < .issueflop
+	while read PS ND IND REST
+	do
+		echo "make floppies for product set $PS (y/n) ?"
+		read ANS < /dev/tty
+		if [ "$ANS" = 'y' ]
+		then
+			END=`expr $ND`
+			NOW=0
+			while [ $END != $NOW ]
+			do
+				DISK=`expr $NOW + 1`
+				INDEX=`expr $IND + $NOW`
+				while :
+				do
+					echo "\07insert floppy disk $DISK\c"
+					echo " for product set $PS, then type return\n"
+					read ANS < /dev/tty
+					init_disk
+					sync;sync
+
+					echo "$PS $DISK $ND" > diskdata
+					cpio_out -h diskdata
+					if [ $INDEX -lt 10 ]
+					then
+						cpio_out d/d0$INDEX
+					else
+						cpio_out d/d$INDEX
+					fi
+
+					sync;sync
+					echo Checksum -r follows:
+					sum -r /dev/rdsk/0s24
+					echo "Did it copy ok? (y/n)" \\c
+					read ANS
+					if [ "$ANS" = "y" ]
+					then break
+					fi
+				done
+				NOW=`expr $NOW + 1`
+			done
+		fi
+	done
+fi

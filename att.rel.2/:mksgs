@@ -1,0 +1,36 @@
+#	@(#)	1.6
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 native sgs"
+
+if [ ! -d $ROOT/bin ]
+then mkdir $ROOT/bin
+fi
+if [ ! -d $ROOT/lib ]
+then mkdir $ROOT/lib
+fi
+cd cmd/sgs
+cd xenv/i286
+sh pathedit <<-EOF
+	y
+	EOF
+cd ../..
+make -f xsgs.mk prepnative
+if [ $# -eq 0 ]
+then
+make -f sgs.mk install
+make -f xsgs.mk shrink
+else
+make -f sgs.mk $@
+fi

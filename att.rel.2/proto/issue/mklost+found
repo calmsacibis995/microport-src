@@ -1,0 +1,40 @@
+#
+# make a lost and found directory
+#
+echo "making lost+found directory for" `pwd`
+i=0
+if [ -d lost+found ]
+then
+	echo "lost+found directory already exists, and this"
+	echo "program will destroy its contents."
+	echo "do you wish to continue? " \\c
+	read foo
+	if [ "$foo" != y ]
+	then
+		exit 1
+	else
+		echo removing lost+found directory
+		rm -rf lost+found
+	fi
+fi
+
+mkdir lost+found
+chmod 777 lost+found
+chgrp bin lost+found
+chown bin lost+found
+
+cd lost+found
+
+echo "allocating space ... ( takes about 3 minutes )"
+
+while [ $i -lt 118 ]
+do
+	echo > lf$i
+	i=`expr $i + 1`
+done
+
+rm lf*
+
+cd ..
+ls -ld lost+found
+

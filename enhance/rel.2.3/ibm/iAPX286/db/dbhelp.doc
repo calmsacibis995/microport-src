@@ -1,0 +1,54 @@
+Kernel Debugger for Release 2.3
+Debugger Commands:
+b <address>                - Set breakpoint at address
+d [address]                - Dump memory in current format
+e <address>                - Examine/open a memory location
+f{b|w|l}                   - Set display format
+g [address]                - Continue execution at address
+h                          - Print this list
+i <address>                - Do an in instruction at address
+k <brkpt_num>              - Kill given breakpoint (* for all)
+l <address>                - Print nearest symbol before address
+o <address> <value>        - Do an out instruction at address
+r [%<reg> <value>]         - Set/display registers
+s                          - Single step (also ESC)
+t <address> [{=|!=} <val>] - Set trace point at address
+w <address>                - Write to memory without read
+x <address>                - Set execution trace point at address
+z                          - Dump some values from the TSS
+?                          - Display break points
+*specials*
+B			   - re-(Boot) system
+S			   - Show Symbols
+Note: <address> can be symbolic name or hex value
+
+
+Configuration Notes:
+
+    1.  To include the debugger, use makefile in the "db" directory.
+	A possible make command is:
+
+	    make test initflop putty stop floppy
+
+	where:
+	    test - makes the kernel with the debugger
+	    initflop - initializes the floppy
+	    putty - redirects console output to tty0
+	    stop - inserts patch to stop kernel in initialization
+	    floppy - copies system5 to floppy A
+
+    2.  The debugger console is an async terminal hooked up to
+        the /dev/tty0 port. You may hook it up to /dev/tty1 by
+        changing (with the patch utility) the variable "asyadr" to
+        0x2f8 (address of the tty1 port). The complete command is:
+
+	 /* debugger I/O */
+	 /etc/patch    /system5 asydbg  0x2f8  /* patch the file */
+	 /etc/patch -k /system5 asydbg  0x2f8  /* patch the in memory kernel */
+
+	 /* kernel printf */
+	 /etc/patch    /system5 put_tty 0x2f8  /* patch the file */
+	 /etc/patch -k /system5 put_tty 0x2f8  /* patch the in memory kernel */
+
+        A future release will allow debugging using the system console.
+

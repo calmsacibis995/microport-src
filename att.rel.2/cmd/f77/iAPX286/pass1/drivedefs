@@ -1,0 +1,39 @@
+/* iAPX286 @(#)drivedefs	1.1 85/09/06 */
+
+/* Definitions for FORTRAN 77 Compiler driver for the IAPX286 */
+
+#if HERE!=VAX | TARGET!=IAPX286 | FAMILY!=PCC
+	Wrong Definitions File!
+#endif
+
+#define PASS1NAME "/usr/lib/f77pass1"
+#define PASS2NAME "/usr/lib/f77pass2"
+#define PASS2OPT "/lib/optim"
+#define ASMNAME "/bin/as"
+#define LDNAME "/bin/ld"
+#if TARGET == IAPX286
+#define FOOTNAME "/lib/small/crt0.o"
+#define PROFFOOT "/lib/small/mcrt0.o"
+#define LFOOTNAME "/lib/large/crt0.o"
+#define LPROFFOOT "/lib/large/mcrt0.o"
+#else
+#define FOOTNAME "/lib/crt0.o"
+#define PROFFOOT "/lib/mcrt0.o"
+#endif
+#define SORTNAME "/bin/sort"
+#define MACRONAME "/usr/bin/m4"
+#define CCNAME "/bin/cc"
+#define EFLNAME "/usr/bin/efl"
+#define RATNAME "/usr/bin/ratfor"
+
+static char *liblist [ ]  = { "-lF77", "-lI77", "-lm", "-lc", "-la", NULL };
+static char *pliblist [ ] = {
+	"-lF77", "-lI77",
+#if TARGET == IAPX286
+	"-L/lib/libp","-lc","-lm","-la",
+#else
+	"/lib/libp/libm.a",
+	"/lib/libp/libc.a",
+#endif
+	NULL
+	};

@@ -1,0 +1,51 @@
+# iAPX286 @(#):mktouch	1.7 - 85/09/03
+# create default installation locations if they are missing.
+
+echo ""
+echo ""
+echo "			Copyright (c) 1985 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo""
+
+echo "Make iAPX286 installation locations"
+
+SRC=${SRC-$ROOT}
+if [ ! $ROOT ]
+then echo You may be sorry
+fi
+
+cat $SRC/usr/src/proto/issue/BASE | while :
+do
+   if read type pkg set prg mode owner group desc path garbage
+   then
+      if [ "$type" != "#" -a "$type" != "?" -a "$type" != "s" ]
+      then
+	 dir=`echo $mode | cut -c1`
+	 if [ "$dir" = "d" ]
+	 then if [ ! -d $ROOT$path ]
+	      then echo mkdir $ROOT$path
+		   mkdir $ROOT$path
+	      else echo nomkdir $ROOT$path
+	      fi
+	 elif [ "$dir" = "-" ]
+	 then echo touch $ROOT$path
+	      touch 0101010170 $ROOT$path
+#             chown $owner $ROOT$path
+#             chgrp $group $ROOT$path
+#             chmod `echo $mode |
+#                    sed -e 's|.\(...\)\(...\)\(...\)|u=\1,g=\2,o=\3|
+#                            s|-||g
+#                            s|=\([rw]*\)\([sg]\)\(,\)|=\1\2x\3|g'` \
+#                   $ROOT$path
+	 fi
+      fi
+   else break
+   fi
+done
+

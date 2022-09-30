@@ -1,0 +1,25 @@
+fs::sysinit:/etc/bcheckrc </dev/console >/dev/console 2>&1
+mt::sysinit:/etc/brc </dev/console >/dev/console 2>&1
+ck::sysinit:/etc/bsetdate </dev/console >/dev/console 2>&1
+is:2:initdefault: # iAPX286 @(#)inittab.sh      1.3
+pf::powerfail:/etc/powerfail >/dev/console 2>&1 #power fail routines
+s0:056:wait:/etc/rc0 </dev/console >/dev/console 2>&1
+s2:2:wait:/etc/rc2 </dev/console >/dev/console 2>&1
+s3:3:wait:/etc/rc3 </dev/console >/dev/console 2>&1
+d1:056:wait:/bin/kill -15 -1 > /dev/console < /dev/console 2>&1
+d2:056:wait:sleep 5
+d3:056:wait:/bin/kill -9 -1 > /dev/console 2>&1
+d4:056:wait:sleep 5
+d5:056:wait:/etc/umountall > /dev/console 2>&1
+d6:056:wait:echo '\nThe system is down.' > /dev/console
+r0:0:wait:/etc/uadmin 2 0       # halt and power off if possible
+r5:5:wait:/etc/uadmin 2 2       # return to firmware if possible
+r6:6:wait:/etc/uadmin 2 1       # reboot if possible
+co:1234:respawn:/etc/getty console console
+c1:1234:respawn:/etc/getty cons1 virtcon
+c2:1234:respawn:/etc/getty cons2 virtcon
+c3:1234:respawn:/etc/getty cons3 virtcon
+t0:23:off:/etc/getty ttyM0 1200
+t0:23:off:/etc/getty ttym0 1200
+t0:23:off:/etc/getty tty0 1200
+t1:23:off:/etc/getty tty1 9600

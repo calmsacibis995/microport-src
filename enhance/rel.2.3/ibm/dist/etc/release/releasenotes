@@ -1,0 +1,36 @@
+Welcome to Microport's System V/AT.
+
+Please be sure to read the the Releasenotes that are enclosed
+with the diskettes. 
+
+If you have any problems with your installation, contact our
+support department at (408) 438-UNIX.
+
+Some Release 2.3 Information:			9/1/87
+
+	1) Shutting down / Rebooting
+		Please note that the preferred way to shut down your
+		system5 is by pressing the "control/alt/delete" keys
+		simultaneously, similar to DOS. If you are an experienced
+		unix user, you may have some reservations about this; don't!
+		Our file-system hardening prevents any data loss. As extra
+		protection, all i/o is flushed out, and mounted filesystems
+		are unmounted before the system comes down.
+		Of course the standard /etc/shutdown is also supported.
+
+	2) This release contains two versions of the kernel.  The kernel
+		on the boot diskette does not have all features enabled
+		and several of the internal tables are smaller.  The idea
+		is to allow this version to run in systems with less memory.
+		The kernel on the utility disk has shared memory support,
+		interprocess communication, and semaphores turned on, as
+		well as larger internal tables.  It is not recommended to
+		run the fully configured kernel with less than 1 Megabyte
+		of RAM installed.
+
+	3) Many bugs have been fixed. Please read the Releasenotes that
+		came packaged with the diskettes.
+
+	4) The console has been much upgraded for more complete "ansi"
+		compatiblity as well as extended support.  Please see
+		the man pages for ansi and console.

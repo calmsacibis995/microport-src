@@ -1,0 +1,189 @@
+
+		Using the Linkkit
+
+1. Introduction
+
+This document describes how to use Microport's linkkit. The linkkit
+allows a user to customize the System V/AT software to meet one's
+needs; in terms of both hardware, as well as optimizing a system's useage. 
+
+The most common need for the linkkit is to add a device driver to 
+System V/AT. Typically, a hardware manufacturer will ship a copy
+of the software neccessary to drive it's product. This software
+needs to be added into the linkkit, and a new copy of the System V/AT
+kernel has to be made. The kernel is the heart of the operating system;
+and resides in the file /system5. Some of it's responsibilities are 
+interfacing the hardware with the user's requests, scheduling work loads, 
+and insuring the integrity of all the UNIX files that are used.
+
+In order to use this linkkit, you must have at least 640K of base ram,
+and about a half megabyte of extended memory. Unfortunately, the
+link editor (/bin/ld) is too large to fit into systems with less than
+640K of base ram. Also, one currently needs the software development
+package. In a future release, the linkkit may work with only the
+runtime system installed.
+
+This document assumes that the user is already familar with
+the basics of UNIX and its utilities.
+
+
+2. Overview of the Kernel Building Process.
+
+The linkkit consists of library archives (ar(1)), makefiles (make(1)),
+and configuration files (config(1)) that describe the current setup of 
+the kernel. If one has a special driver from some peripheral manufacturer, 
+it's usually in object code format (that is, it has a name like device.o).
+A new kernel must be built with this driver in order for your System V/AT
+to work with the hardware.
+
+To link in this new driver, one must do the following:
+		1) Add the driver object file to the appropriate library,
+			lib2 for i/o drivers.  This can be done by using
+			the ar(1) command to archive device.o into lib2.
+		2) Build the System V/AT kernel.
+			A) cd into the cf directory.
+			B) edit the configuration files "dfile" and "master"
+			   as neccessary to reflect your current hardware.
+			C) type "make wini" to generate all of the
+			   neccessary files and to execute the necessary
+			   loader command needed to build the kernel.
+			   The resulting kernel will be called ../system5.
+		3) Run the kernel. To do this, one should:
+			A) backup your current kernel (/system5).
+			B) copy the new kernel into /system5.
+			C) create any additional "special files" via mknod(1)
+			   that may be neccessary for your new driver.
+			D) reboot your system.
+
+
+2.2 An Example of building a Kernel 
+
+All new device drivers should be compiled in the io directory and added to
+the lib2 library.  The makefile for the standard device drivers can be found
+in the io directory and illustrates the procedure for building the device
+driver. 
+
+This version does not require separate drivers for the digiboard multi-
+serial card as did previous releases.  The serial drivers can be patched 
+to support upto 8 serial ports on either of the com interrupts.  A special
+patch script (ttypatch) is used for this purpose.
+
+This System V/AT 2.3 version now supports use of the slave PIC as well as
+shared DMA channels by new drivers.
+Also included in this version of System V/AT are interfaces for dynamic
+kernel memory management and GDT selector management.  If the file
+"linkkit/sys/xenix.h" is included in your driver source, the following
+Xenix compatible routines are available:
+
+	    dscralloc()
+	    dscrfree()
+	    dscraddr()
+
+For more detail about the above interfaces,  see runtime chapter 13.
+
+The first step in building a kernel is to build the correct linkkit/lib2
+file. This file is in ar(1) archive format. If you type 'ar -tv lib2'
+you can see what object modules are in there already. The standard linkkit
+comes with asyconf.o and asyint.o already in the lib2 library. These
+must be removed if you're going to build a kernel using another serial
+driver.  
+
+If you are in the linkkit/io directory, type the following command to
+remove the IBM serial card driver:
+	ar -dv ../lib2 asyconf.o asyint.o
+The makefile in the linkkit/io directory can be edited, or modeled, to
+add new drivers to the linkkit/lib2 library.  
+
+Having built the desired lib2 library, we can now build our new kernel.
+One just has to cd into the linkkit/cf directory, and type "make wini".
+If you add new drivers to lib2, they will not be included in the kernel
+unless they are also referenced in handlers.c, config.h and conf.c in 
+linkkit/cf. In this 2.3 linkkit version, these files are automatically
+built by config using the configuration files "linkkit/cf/master" and
+"linkkit/cf/dfile.wini".  The resulting kernel will be in your linkkit
+directory and called "linkkit/system5".
+
+Another by-product of the kernel make is the file "linkkit/system5.nm".
+This contains a namelist of all of the symbols contained in the kernel.
+Note that the variables in this namelist are patchable via the patch(1)
+command.
+
+To test out your kernel, it is highly recommended that you back up
+your original /system5 kernel; for example:
+	cp /system5 /system5.00
+
+One can restore your system to its original configuration by copying 
+/system5.00 back to /system5.
+
+Next, you can copy your linkkit/system5 to /system5 so the new kernel
+will boot by default.  Or, since the new 2.3 boot allows you to boot
+alternate kernel files, you can copy the linkkit kernel to a unique
+name in the "/" directory, ie. "/sys.test".
+The next time that you boot your AT, the new kernel file name can be
+typed to the "boot: prompt", or a carriage return will boot "/system5"
+by default.
+
+Finally, note that the running kernel file must always be linked to
+"/unix" in order for programs like 'ps' to work.  As with almost all
+of the System V/AT utilities, ps(1) was copied directly from the
+certified release, without even a recompile.  Thus it looks for "/unix",
+and not "/system5". By linking these two files together, you insure that
+all of the utilities will work correctly.  If you always copy a new
+kernel over the old "/system5" you will not disturb the link.
+
+Caution, be sure to at least one copy of your current working boot floppy.
+Use this if a new kernel crashes or does not come up.  You simply boot from
+the floppy, mount the /dev/dsk/0s0 root partition under /mnt with the command
+
+mount /dev/dsk/0s0 /mnt
+
+If this does not work, try running a "fsck /dev/dsk/0s0" first.  Once mounted
+you can replace your old working /system5 with the following commands (you 
+must first save it as recommended above).
+
+	cp /mnt/system5.00 /mnt/system5
+	umount /dev/dsk/0s0
+
+After successfully restoring the previous kernel you can simply reboot
+from the hard disk.  Note, you can also restore the system5 file from
+the boot floppy, but remember that you must run hdrt.patch on it before
+booting.
+
+
+2.3 Some General Comments on building a Kernel.
+
+The above section provided a specific example of linking in
+a driver. Each driver has its own requirements; and may need
+modifications to certain files. This section will cover the more
+general case of linking in a driver.
+
+2.3.1 Adding new device drivers.
+
+To add a new driver into the kernel, the first step is to add the
+new object module to the lib2 library. This can always be done
+directly with the ar(1) archive command, but it is better to change
+the makefile in the io directory, so that the whole process is handled
+automatically.
+
+After the lib2 library has been built, the next step is to build the
+kernel. But unlike the previous cases that we've covered so far, we
+can't just type "make wini" yet. One must first make sure that the 
+"dfile.wini" file is set up correctly. The layout of this file is
+described in the runtime documentation for the config(1) command.
+
+
+2.3.2 Turning on Shared Memory and IPC.
+
+To turn these features of System V/AT, one must edit the dfile and
+change the following lines:
+	mesg	0
+	shmem	0
+	sema	0
+These must be changed to:
+	mesg	1
+	shmem	1
+	sema	1
+
+The resulting kernel will then have shared memory and Inter Process
+Communication turned on.
+

@@ -1,0 +1,24 @@
+* @(#)dfile.5inw	1.4
+wini	0	1
+flp	0	1
+root	wini	6
+pipe	wini	6
+swap	wini	6	12288	4096
+dump	wini	0
+sio	0	4
+sxt	0	8
+lp	0	1
+prf	0	1
+buffers	63
+inodes	75
+files	75
+mounts	8
+swapmap	75
+coremap	75
+calls	50
+procs	65
+texts	40
+clists	150
+mesg	1
+shmem	1
+sema	1

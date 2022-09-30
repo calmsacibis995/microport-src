@@ -1,0 +1,6 @@
+#  Setup for shared memory segments used for graphics
+
+/etc/shmcreate 0xa0000 a0000 65535		# ega high res
+/etc/shmcreate 0xb0000 b0000 65535		# ega low res
+/etc/shmcreate 0xb8000 b8000 32768		# cga
+/etc/shmcreate 0xc6000 c6000  4096		# pga

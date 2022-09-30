@@ -1,0 +1,67 @@
+The screen driver supports, in addition to the ANSI sequences which
+are listed in the termcap entry, these:
+
+    Character attribute settings
+
+    ESC[0m      Switch to normal characters, white on black
+    ESC[1m      Boldface (brighten foreground color)
+    ESC[2x;ym   Set foreground and background colors in graphic modes:
+                    in 320x200 mode, x is foreground and y is background
+                    in 640x200 mode, y is foreground and x is ignored
+    ESC[4m      Underscore on (monochrome only)
+    ESC[5m      Blink characters or brighten background color
+    ESC[7m      Reverse video (white on black)
+    ESC[8m      Invisible characters
+    ESC[3;0m    Switch from blink mode to bright background mode
+    ESC[3;1m    Switch from bright background mode to blink mode
+    ESC[10m     Use primary (normal ASCII font)
+    ESC[11m     Use first alternate font (chars less than 32 print)
+    ESC[12m     Use second alternate font (use upper half of font rom)
+    ESC[30m     Black foreground
+    copy rest from page 3-15 of DOS ref manual
+
+    Screen mode settings
+
+    The following are valid with a Color Graphics Adapter (CGA) with a
+    Color Display (CD) or composite video monitor.
+        ESC[=0h     Mode 0    - 40x25 black & white text.
+        ESC[=1h     Mode 1    - 40x25 color text.
+        ESC[=2h     Mode 2    - 80x25 black & white text.
+        ESC[=3h     Mode 3    - 80x25 16 color text.
+        ESC[=4h     Mode 4    - 320x200 4 color graphics.
+        ESC[=5h     Mode 5    - 320x200 4 intensity B&W graphics.
+        ESC[=6h     Mode 6    - 640x200 2 color graphics.
+
+    Monochrome Display (MD) modes.
+        ESC[=7h     Mode 7    - 80x25 black & white text.
+        ESC[=11h    Mode F    - 640x350 black & white graphics.
+        ESC[=12h    Hercules  - 720x348 black & white graphics.
+
+    Notes:  Mode 7 is the only supported mode on a Monochrome Adapter (MA).
+            Mode 7 and Mode F are the only modes supported on an 
+            EGA/MA combination.
+            Mode 7 and Hercules Mode are the only modes supported on an 
+            Hercules/MA combination.
+
+    Modes 0,1,2,3,4,5,6, and the following are valid with an Enhanced 
+    Graphics Adapter (EGA) and a CD.
+        ESC[=8h     Mode D    - 320x200 16 color graphics
+        ESC[=9h     Mode E    - 640x200 16 color graphics
+    
+    Modes 0,1,2,3,4,5,6, and the following are valid with an Enhanced 
+    Graphics Adapter (EGA) and an Enhanced Display (ED).
+        ESC[=10h    Mode 10   - 640x200 64 color graphics
+
+    And last:
+        ESC[=h      Switch back to normal text mode.
+
+Configuration:
+    The screen driver will use the EGA, CGA or MA, depending on the CMOS 
+setting and the EGA switches.  If an EGA is installed, its configuration
+switch will be honored.  If both an MA and a CGA are installed, the CMOS
+setting (not the motherboard switch)  will be used to determine which is
+used.   If only one  adapter is installed,  it is used regardless of the
+CMOS  setting.    The  40  column text  mode is not implemented.  To use
+Hercules  graphics mode with a Hercules-compatible board,  the user must
+run do this command: 'patch /system5 hercules 1' and then re-boot.  
+

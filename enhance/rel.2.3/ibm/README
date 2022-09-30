@@ -1,0 +1,62 @@
+Mon Jul  7 10:25:54 PDT 1986	uport!dwight
+Thu Sep 17 15:30:38 PDT 1987	uport!rex
+
+This heirarchy contains the source code for the 2.3.0 release.
+The various directories are:
+
+Boot:	Contains the code for "Big Boot"; i.e. the boot code
+	that understands how to read in a unix kernel.
+
+boot:	The source code for "little boot"; i.e. the boot block.
+
+dist:	This heirarchy is an exact image of the boot disk's filesystem.
+
+iAPX286:	Contains all of the kernel source code.
+
+iAPX286/cmd:	Contains the code for various AT and kernel specific utilities.
+
+usr/linkkit:	The files that make up a linkkit, shipped in installit
+		floppy format
+
+To make a kernel, cd into the iAPX286/cf directory and edit the
+configuration files "master" and "dfile.wini" to reflect your system
+changes.  Then type "make wini" which will leave the resulting kernel
+in ../system5.
+
+To make a boot diskette, the "make" utility is used from this release
+directory.  The makefile will handle the proper mkfs of the floppy,
+and will also make the floppy bootable. An fsck is performed at the end.
+Four flavors of the boot disk can be made with these commands:
+
+	make lloginboot		To prepare for a Limited Login boot disk
+	make uloginboot		To prepare for a Unlimited Login boot disk
+	make ibmboot		To make a compatible boot floppy
+	make tviboot		To make a boot floppy for the TVI disk
+				controller
+
+Other commands using the Makefile in this directory are:
+
+	make linkkit		To make a linkkit
+	make lloginlink		To prepare a linkkit for a Limited Login
+				version
+	make uloginlink		To prepare a linkkit for a Unlimited Login
+				version
+	make linkdisk		To make a linkkit installit diskette
+	make linkclean		To remove the linkkit links from the
+				usr/linkkit directory
+
+Examples:
+
+	make lloginboot ibmboot
+				To make a Limited Login PC/AT compatible
+				boot diskette
+
+	make linkkit uloginlink linkdisk
+				To make a Link Kit in usr/linkkit and create
+				links to the appropriate files to create an
+				Unlimited Login version of the Link Kit,
+				then copy the files to the floppy in installit
+				format.
+
+	make linkdisk		To copy an existing link kit to a floppy
+				in installit format

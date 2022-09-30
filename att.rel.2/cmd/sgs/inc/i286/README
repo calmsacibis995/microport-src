@@ -1,0 +1,79 @@
+#/*   @(#)README	1.2 - 85/07/08 */
+If you have not already done so, please change your
+directory to the directory in which this README file is.
+The "make" of the include files consists of copying them
+to the appropriate directories.  First, the directory
+structure under /usr/b16/include or an alternate directory
+must be created.  This step may be omitted for "old"
+installations.  Directories are created by issuing:
+
+		make  first
+
+or alternatively,
+
+		make  "INCDIR=/my/include"  first
+
+where "/my/include" is the full pathname of the system directory
+in which include files are to be kept.
+
+The include file named "paths.h" contains the name of the
+directory "/usr/b16".  If an alternate directory is to be used,
+the installer must edit this file and substitute the name
+of the directory(s) for all occurances of "/usr/b16/bin",
+"/usr/b16/include" and "/usr/b16/lib".
+All products which need to know the Basic-16 directory name
+(b16ld, b16cc) will obtain it from this include file.
+
+For example:
+
+		ed  paths.h
+		1,$s%/usr/b16%/my/direct%
+		1,$p
+		w
+		q
+
+
+The "paths.h" file also contains the name of the directory
+in which temporary files are created.  The default is /usr/tmp.
+To use a different directory for temporaries, you must change
+the #define for B16TMP.  For example to use /tmp instead:
+
+                ed paths.h
+                /B16TMP/
+                s?usr/tmp?tmp?p
+                w
+                q
+
+
+To install the include files, the installer enters:
+
+		make  install
+
+or alternatively,
+
+		make  "INCDIR=/my/include"  install
+
+This will copy all include files under either "/usr/b16/include"
+or "/my/directory/include", respectively.
+
+For "old" installations, the previous version of the include
+files can be saved by issuing the command:
+
+                make  save
+
+or alternatively,
+
+                make INCDIR=/my/include  save
+
+
+After a previous version has been saved by "make save", if
+there are bugs in the new version or if problems occur
+during "make" or "make install", the previous version may
+be restored by
+
+                make  uninstall
+
+or alternatively,
+
+                make INCDIR=/my/include  uninstall
+

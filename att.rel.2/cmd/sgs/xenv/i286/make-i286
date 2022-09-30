@@ -1,0 +1,22 @@
+#ident	"@(#)ccs-s5:xenv/i286/make-i286	1.5"
+#
+#	Front end script to "make" for use in cross compilation of
+#	i286 SGS
+#
+
+MAKECMD=
+
+MAKEOPTS="MAKE=make AS=xxxcc CC=xxxcc LD=xxxld TESTDIR=. \
+	CCOPTIM=lll/xxxoptim \
+	OL=$ROOT/ SL=$ROOT/usr/src/cmd \
+	ROOT=$ROOT \
+	SIZE=xxxsize LORDER=xxxlorder STRIP=xxxstrip PFX=xxx \
+	DIS=xxxdis NM=xxxnm CONV=xxxconv AR=xxxar"
+
+echo xxx-make
+if [ $# = 0 ]
+then
+	exec $MAKECMD $MAKEOPTS
+else
+	exec $MAKECMD $MAKEOPTS "$@"
+fi

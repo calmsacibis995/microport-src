@@ -1,0 +1,54 @@
+#/*   @(#)xsgs.mk.i286	1.2 - 85/07/09 */
+#	i286 Cross-SGS Global Makefile
+#	PATHEDIT MUST BE RUN BEFORE THIS MAKEFILE IS USED!
+#
+#
+
+BINDIR=
+SGS=
+
+all:	install libbuild
+
+libbuild:
+	cd xenv/i286; \
+		$(BINDIR)/$(SGS)env make libldshrink; \
+		$(BINDIR)/$(SGS)env make MODEL=small MSPEC=-Ms libldinstall; \
+		$(BINDIR)/$(SGS)env make libldshrink; \
+		$(BINDIR)/$(SGS)env make MODEL=large MSPEC=-Ml libldinstall; \
+		$(BINDIR)/$(SGS)env make libldshrink;
+
+install:  sgs
+	cd xenv/i286; make install
+
+first:
+	cd xenv/i286; make first
+
+sgs:	
+	cd xenv/i286; $(MAKE) all
+
+uninstall:
+	cd xenv/i286; make uninstall
+
+save:
+	cd xenv/i286; make save
+
+shrink:
+#	if [ -f "$(BINDIR)/$(SGS)env" ] ; \
+#	then \
+#		cd ../../lib; $(BINDIR)/$(SGS)env make clobber ; \
+#	fi
+	cd xenv/i286; make shrink
+
+prepnative: shrink
+	# make paths.h for native build
+	sed < xenv/i286/paths.h > inc/i286/paths.h \
+	-e "s%SGS%%g" \
+	-e "s%I286BINDIR%/bin%" \
+	-e "s%I286LIBDIR%/lib%" \
+	-e "s%I286INCDIR%/usr/include%" \
+	-e "s%I286TMPDIR%/tmp%" \
+	-e "s%I286CPP%/lib/cpp%"
+
+	# make sgs.h for native build
+	sed < xenv/i286/sgs.h > inc/i286/sgs.h \
+	-e "/SGS/s%\".*\"%\"\"%"

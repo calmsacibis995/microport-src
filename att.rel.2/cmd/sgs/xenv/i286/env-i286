@@ -1,0 +1,45 @@
+#ident	"@(#)ccs-s5:xenv/i286/env-i286	1.5"
+#
+#
+#	Template for the i286 cross environment setup script.
+#	The purpose of this shell script is to put the user's cross bin
+#	first in the user's path and to define environment variables used
+#	when building the cross-libraries.
+#
+ROOT=
+set -- `getopt r: $*`
+for i in $*
+do
+	case $i in
+	-r)	ROOT=$2; shift 2;;
+	--)	shift; break;;
+	esac
+done
+
+PATH=
+SHELL=/bin/sh
+export PATH ROOT SHELL
+VARIANT=
+CFLAGS=
+PCFLAGS=
+PFX=
+CC=
+AR=
+STRIP=
+LORDER=
+LIB=
+LIBP=
+PROF=
+DONE=
+DEFLIST=
+CH='#'
+export VARIANT CFLAGS PCFLAGS PFX CC AR STRIP LORDER LIB LIBP PROF DONE DEFLIST CH
+PS1=i286env:$PS1
+PS2=i286env:$PS2
+export PS1 PS2
+if [ $# = 0 ]
+then
+	exec /bin/sh
+else
+	exec $*
+fi

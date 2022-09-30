@@ -1,0 +1,107 @@
+cd /
+cpio -iu </dev/rdsk/0s24 
+if [ $? -ne 0 ]
+then
+	echo "\naborting due to the above error\n"
+	exit 1
+fi
+read diskset diskname disknext < diskdata
+echo "\nInstalling from #$diskname of set $diskset\n"
+echo "Copyright (c) 1985 AT&T"
+echo "All Rights Reserved"
+Xdiskset="dummy"
+if [ -f olddiskdata ]
+then
+	read Xdiskset Xdiskname < olddiskdata
+fi
+if [ "$Xdiskset" != "$diskset" -o "$Xdiskname" != "$diskname" ]
+then
+	while :
+	do
+		if [ "$Xdiskset" != "dummy" -a "$Xdiskname" != "none" ]
+		then
+			echo "\nexpected $Xdiskset #$Xdiskname"
+		fi
+		echo "\nIs this ok? (y or n) \c"
+		read reply
+		case "$reply" in
+		 	y )
+				break
+				;;
+			n* )
+				break
+				;;
+			* )
+				echo "Invalid input. Try again."
+				continue
+				;;
+		esac
+	done
+else
+	reply="y"
+fi
+if [ "$reply" != "y" ]
+then
+	break
+else
+  	echo "\nThe following files have been installed:"
+	if [ -x /bin/df ]
+	then
+		val=`df /usr`
+		if [ ! "$val" ]
+		then
+			usr=7
+			if [ -r /dev/dsk/0s10 ]
+			then
+				usr=11
+			fi
+			if [ -x /etc/mount ]
+			then
+				mount /dev/dsk/0s$usr /usr
+				if [ $usr = 11 ]
+				then mount /dev/dsk/0s14 /tmp
+				fi
+			fi
+		fi
+	fi
+  	cpio -ivduma $1 </dev/rdsk/0s25
+	if [ $? -ne 0 ]
+	then
+		echo "\naborting due to the above error\n"
+		exit 1
+	fi
+	sync
+	sync
+	sync
+	if [ ! "$1" ]
+	then
+ 		if [ "$diskname" != "$disknext" ]
+  		then
+			DISK=`expr $diskname + 1`
+			echo "\ninsert floppy set \c"
+			echo "$diskset #$DISK then type 'setup'"
+			echo "$diskset $DISK" >olddiskdata
+  		else
+  			if [ -f /tmp/$diskset\links ]
+  			then
+				/tmp/$diskset\links
+				rm /tmp/$diskset\links
+  			fi
+
+  			if [ -f /tmp/$diskset\exec  -a "$2" != "no" ]
+  			then
+				echo "\n"executing /tmp/$diskset\exec
+				/tmp/$diskset\exec
+				rm /tmp/$diskset\exec
+  			fi
+
+			cd /
+			echo "\ninstallation for \c"
+			echo "$diskset complete"
+			rm -f  olddiskdata diskdata
+			sync
+			sync
+			sync
+  		fi
+	fi
+fi

@@ -1,0 +1,5 @@
+g/\.comm	/s/\.comm	\(.*\),\(.*\)/.globl	\1\
+	.bss	\1,\2\
+	.data/
+w
+q

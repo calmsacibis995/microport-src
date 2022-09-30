@@ -1,0 +1,3 @@
+#	iAPX286 @(#)fstab.40	1.3
+/dev/dsk/0s11 /usr
+/dev/dsk/0s14 /tmp
